@@ -21,7 +21,7 @@ const AI_MODELS = [
 ];
 
 // Default empty student profile builder
-function buildStudentProfile(student: StudentEntry, submissions: OutlineSubmission[]): StudentProfile {
+function buildStudentProfile(student: StudentEntry, submissions: OutlineSubmission[] = [], className: string = ''): StudentProfile {
   const scores = submissions
     .map(s => s.gradeAfter?.score || s.gradeBefore?.score || 0)
     .filter(s => s > 0);
@@ -31,7 +31,7 @@ function buildStudentProfile(student: StudentEntry, submissions: OutlineSubmissi
   return {
     id: student.id,
     name: student.name,
-    gradeClass: '',
+    gradeClass: className || 'Chưa xếp lớp',
     avatar: student.avatar,
     level,
     avgScore,
@@ -91,7 +91,28 @@ export default function App() {
   // Class & Student management
   const [classInfo, setClassInfo] = useState<ClassInfo | null>(() => {
     const saved = localStorage.getItem('vm5_class_info');
-    return saved ? JSON.parse(saved) : null;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as ClassInfo;
+        let modified = false;
+        if (parsed && parsed.students) {
+          parsed.students = parsed.students.map((s, idx) => {
+            if (!s.pin) {
+              s.pin = String(Math.floor(1000 + Math.random() * 9000));
+              modified = true;
+            }
+            return s;
+          });
+        }
+        if (modified) {
+          localStorage.setItem('vm5_class_info', JSON.stringify(parsed));
+        }
+        return parsed;
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
   });
   const [currentStudent, setCurrentStudent] = useState<StudentEntry | null>(() => {
     const savedId = localStorage.getItem('vm5_current_student');
@@ -122,6 +143,20 @@ export default function App() {
       setShowSettingsModal(true);
     }
   }, []);
+
+  // Auto-lock teacher mode when not on the teacher tab or when selecting student picker
+  useEffect(() => {
+    if (activeTab !== 'teacher' || showStudentPicker) {
+      setIsTeacherAuthenticated(false);
+    }
+  }, [activeTab, showStudentPicker]);
+
+  // Auto-redirect unauthorized users away from teacher tab
+  useEffect(() => {
+    if (activeTab === 'teacher' && !isTeacherAuthenticated && classInfo) {
+      setActiveTab('syllabus');
+    }
+  }, [activeTab, isTeacherAuthenticated, classInfo]);
 
   const handleSaveSettings = () => {
     if (tempApiKey.trim()) {
@@ -162,6 +197,13 @@ export default function App() {
     // Load this student's submissions
     const saved = localStorage.getItem(`vm5_submissions_${student.id}`);
     setCustomSavedOutlines(saved ? JSON.parse(saved) : []);
+    
+    // Auto-lock teacher mode and switch to student home when a student logs in
+    setIsTeacherAuthenticated(false);
+    if (activeTab === 'teacher') {
+      setActiveTab('syllabus');
+    }
+    
     setShowStudentPicker(false);
   };
 
@@ -449,13 +491,13 @@ export default function App() {
               transition={{ duration: 0.25 }}
             >
               <PortfolioTab 
-                studentProfile={currentStudent ? buildStudentProfile(currentStudent, customSavedOutlines) : buildStudentProfile({ id: 'guest', name: 'Khách', avatar: '🎒' }, [])} 
+                studentProfile={currentStudent ? buildStudentProfile(currentStudent, customSavedOutlines, classInfo?.className) : buildStudentProfile({ id: 'guest', name: 'Khách', avatar: '🎒' }, [], classInfo?.className)} 
                 customSavedOutlines={customSavedOutlines} 
               />
             </motion.div>
           )}
 
-          {activeTab === 'teacher' && (
+          {activeTab === 'teacher' && (isTeacherAuthenticated || !classInfo) && (
             <motion.div
               key="teacher-view"
               initial={{ opacity: 0, y: 10 }}

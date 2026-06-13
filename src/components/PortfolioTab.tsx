@@ -226,10 +226,10 @@ export default function PortfolioTab({ studentProfile, customSavedOutlines }: Po
           <div className="bg-gradient-to-br from-amber-50 to-orange-50/30 p-5 rounded-2xl border border-amber-200/50 shadow-sm space-y-2">
             <div className="flex items-center space-x-1.5 text-amber-900 font-bold text-xs uppercase tracking-wider">
               <User className="w-4 h-4 text-amber-600" />
-              <span>Chân dung người viết An</span>
+              <span>Chân dung người viết {studentProfile.name}</span>
             </div>
             <p className="text-xs text-amber-800 font-medium leading-relaxed italic">
-              "An là học sinh có khả năng quan sát thiên nhiên rất sinh động. Thích viết lồng ghép các bài học triết lý ngộ nghĩnh và biết lắng nghe, tiếp thu chi tiết đắt giá từ huấn luyện viên AI để vượt hạng ngoạn mục."
+              "{studentProfile.name} là học sinh có khả năng quan sát thiên nhiên rất sinh động. Thích viết lồng ghép các bài học triết lý ngộ nghĩnh và biết lắng nghe, tiếp thu chi tiết đắt giá từ huấn luyện viên AI để vượt hạng ngoạn mục."
             </p>
           </div>
         </div>
@@ -261,7 +261,7 @@ export default function PortfolioTab({ studentProfile, customSavedOutlines }: Po
                 <div className="text-center space-y-1.5 border-b border-dashed border-neutral-200 pb-5">
                   <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest block">VietMaster 5 • Hồ Sơ Đánh Giá Định Kỳ</span>
                   <h3 className="text-xl font-black font-sans text-neutral-800 uppercase tracking-tight">BÁO CÁO PHÁT TRIỂN NĂNG LỰC VIẾT</h3>
-                  <p className="text-xs text-neutral-500 font-medium">Báo cáo gửi các Bác Phụ Huynh của em <strong className="text-neutral-800">{studentProfile.name}</strong> • Lớp 5A22</p>
+                  <p className="text-xs text-neutral-500 font-medium">Báo cáo gửi các Bác Phụ Huynh của em <strong className="text-neutral-800">{studentProfile.name}</strong> • Lớp {studentProfile.gradeClass}</p>
                 </div>
 
                 {/* Content body */}
@@ -293,7 +293,7 @@ export default function PortfolioTab({ studentProfile, customSavedOutlines }: Po
                   <div className="space-y-2">
                     <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider block">Nhận định sư phạm từ AI Huấn luyện viên:</span>
                     <p className="bg-amber-50/30 p-4 rounded-xl border border-amber-100/30 text-amber-900 leading-relaxed">
-                      "Bé An cho thấy năng khiếu cảm thụ không gian tự nhiên và các hoạt động sinh động xuất sắc. Đặc biệt, bé có tinh thần tự hoàn khảo, chủ động thay đổi các ý chung chung vắn tắt của Lần 1 thành những hình tượng bừng sáng ở Lần 2. Kỹ năng lập dàn bài đạt xếp loại <strong>Master Outliner</strong>. Khuyến khích bé bộc lộ cảm xúc mộc mạc hướng nội nhiều hơn."
+                      "Bé {studentProfile.name} cho thấy năng khiếu cảm thụ không gian tự nhiên và các hoạt động sinh động xuất sắc. Đặc biệt, bé có tinh thần tự hoàn khảo, chủ động thay đổi các ý chung chung vắn tắt của Lần 1 thành những hình tượng bừng sáng ở Lần 2. Kỹ năng lập dàn bài đạt xếp loại <strong>{studentProfile.level}</strong>. Khuyến khích bé bộc lộ cảm xúc mộc mạc hướng nội nhiều hơn."
                     </p>
                   </div>
 
