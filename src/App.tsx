@@ -88,6 +88,18 @@ export default function App() {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [tempApiKey, setTempApiKey] = useState('');
 
+  // Tab permissions configuration
+  const [tabPermissions, setTabPermissions] = useState<Record<string, { student: boolean; guest: boolean }>>(() => {
+    const saved = localStorage.getItem('vm5_tab_permissions');
+    return saved ? JSON.parse(saved) : {
+      syllabus: { student: true, guest: true },
+      helper: { student: true, guest: true },
+      game: { student: true, guest: true },
+      detective: { student: true, guest: true },
+      portfolio: { student: true, guest: true }
+    };
+  });
+
   // Class & Student management
   const [classInfo, setClassInfo] = useState<ClassInfo | null>(() => {
     const saved = localStorage.getItem('vm5_class_info');
@@ -151,12 +163,27 @@ export default function App() {
     }
   }, [activeTab, showStudentPicker]);
 
-  // Auto-redirect unauthorized users away from teacher tab
+  // Auto-redirect unauthorized users away from teacher tab or disabled tabs
   useEffect(() => {
-    if (activeTab === 'teacher' && !isTeacherAuthenticated && classInfo) {
-      setActiveTab('syllabus');
+    if (activeTab === 'teacher') {
+      if (!isTeacherAuthenticated && classInfo) {
+        setActiveTab('syllabus');
+      }
+      return;
     }
-  }, [activeTab, isTeacherAuthenticated, classInfo]);
+
+    if (isTeacherAuthenticated) return;
+
+    const role = currentStudent ? 'student' : 'guest';
+    const isAllowed = tabPermissions[activeTab]?.[role] !== false;
+    if (!isAllowed) {
+      // Find the first allowed tab
+      const firstAllowed = tabs.find(tab => tabPermissions[tab.id]?.[role] !== false);
+      if (firstAllowed) {
+        setActiveTab(firstAllowed.id);
+      }
+    }
+  }, [activeTab, isTeacherAuthenticated, classInfo, currentStudent, tabPermissions]);
 
   const handleSaveSettings = () => {
     if (tempApiKey.trim()) {
@@ -169,6 +196,11 @@ export default function App() {
     }
     localStorage.setItem('vm5_model', selectedModel);
     setShowSettingsModal(false);
+  };
+
+  const handleUpdatePermissions = (newPermissions: Record<string, { student: boolean; guest: boolean }>) => {
+    setTabPermissions(newPermissions);
+    localStorage.setItem('vm5_tab_permissions', JSON.stringify(newPermissions));
   };
 
   const handleOpenSettings = () => {
@@ -230,6 +262,12 @@ export default function App() {
     { id: 'portfolio' as const, label: '🏆 Portfolio Tiến Bộ', icon: Award, color: 'text-purple-500' },
   ];
 
+  const allowedTabs = tabs.filter(tab => {
+    if (isTeacherAuthenticated) return true;
+    const role = currentStudent ? 'student' : 'guest';
+    return tabPermissions[tab.id]?.[role] !== false;
+  });
+
   return (
     <div className="min-h-screen flex flex-col font-body text-neutral-800 antialiased">
       {/* ===== HEADER ===== */}
@@ -289,7 +327,7 @@ export default function App() {
         <div className="bg-white/80 backdrop-blur-md border-b border-amber-100/50 shadow-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center space-x-1 py-2.5 overflow-x-auto no-scrollbar scroll-smooth">
-              {tabs.map((tab) => {
+              {allowedTabs.map((tab) => {
                 const isActive = activeTab === tab.id;
                 return (
                   <motion.button
@@ -511,6 +549,8 @@ export default function App() {
                 onOpenSettings={handleOpenSettings}
                 classInfo={classInfo}
                 onSaveClass={handleSaveClass}
+                tabPermissions={tabPermissions}
+                onUpdatePermissions={handleUpdatePermissions}
               />
             </motion.div>
           )}

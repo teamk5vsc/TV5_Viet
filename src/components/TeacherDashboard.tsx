@@ -18,9 +18,19 @@ interface TeacherDashboardProps {
   onOpenSettings: () => void;
   classInfo: ClassInfo | null;
   onSaveClass: (info: ClassInfo) => void;
+  tabPermissions: Record<string, { student: boolean; guest: boolean }>;
+  onUpdatePermissions: (newPermissions: Record<string, { student: boolean; guest: boolean }>) => void;
 }
 
-export default function TeacherDashboard({ apiKey, selectedModel, onOpenSettings, classInfo, onSaveClass }: TeacherDashboardProps) {
+export default function TeacherDashboard({ 
+  apiKey, 
+  selectedModel, 
+  onOpenSettings, 
+  classInfo, 
+  onSaveClass,
+  tabPermissions,
+  onUpdatePermissions
+}: TeacherDashboardProps) {
   // Class setup state
   const [isEditing, setIsEditing] = useState(!classInfo);
   const [className, setClassName] = useState(classInfo?.className || '');
@@ -33,6 +43,13 @@ export default function TeacherDashboard({ apiKey, selectedModel, onOpenSettings
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [reportSuccessMsg, setReportSuccessMsg] = useState<string | null>(null);
   const [showPins, setShowPins] = useState(false);
+
+  // Tab permissions toast
+  const [showPermissionsToast, setShowPermissionsToast] = useState(false);
+  const showSaveToast = () => {
+    setShowPermissionsToast(true);
+    setTimeout(() => setShowPermissionsToast(false), 2500);
+  };
 
   // Group state
   const [newGroupName, setNewGroupName] = useState('');
@@ -849,6 +866,107 @@ export default function TeacherDashboard({ apiKey, selectedModel, onOpenSettings
                     </div>
                   )}
                 </div>
+              </div>
+            </div>
+          </div>
+
+
+          {/* ===== ACCESS CONTROL CONFIGURATION ===== */}
+          <div className="lg:col-span-4">
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl border border-purple-100/30 shadow-sm p-6 space-y-4">
+              <div className="flex items-center space-x-3 border-b border-neutral-100 pb-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center">
+                  <Lock className="w-5 h-5 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-heading font-extrabold text-neutral-800">🔒 Cấu hình quyền truy cập thanh công cụ</h3>
+                  <p className="text-[11px] text-neutral-500">Thiết lập linh hoạt những mục hiển thị cho Học sinh và Khách</p>
+                </div>
+              </div>
+
+              {/* List of tabs and their permissions */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left text-neutral-700 min-w-[400px]">
+                  <thead className="text-[10px] uppercase font-bold text-neutral-400 bg-neutral-50/70 border-b border-neutral-200/50">
+                    <tr>
+                      <th className="p-3">Mục thanh công cụ</th>
+                      <th className="p-3 text-center">Học sinh (Đã đăng nhập)</th>
+                      <th className="p-3 text-center">Khách (Chưa đăng nhập)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-100">
+                    {[
+                      { id: 'syllabus', label: '📚 Thư viện dạng bài', desc: 'Thư viện lý thuyết, đề gợi ý và các quy tắc viết văn AI' },
+                      { id: 'helper', label: '💡 Dàn ý thông minh AI', desc: 'Không gian phác thảo dàn ý và chấm điểm/so sánh bằng AI' },
+                      { id: 'game', label: '🎮 Trò chơi sắp đặt', desc: 'Trò chơi kéo thả sắp xếp bố cục câu chuyện' },
+                      { id: 'detective', label: '🕵️ Thám tử bắt lỗi', desc: 'Trò chơi tìm lỗi văn bản và đối chiếu kết quả' },
+                      { id: 'portfolio', label: '🏆 Portfolio Tiến Bộ', desc: 'Hồ sơ năng lực học tập và bài viết mẫu đã lưu' },
+                    ].map((tabItem) => {
+                      const perm = tabPermissions[tabItem.id] || { student: true, guest: true };
+                      return (
+                        <tr key={tabItem.id} className="hover:bg-neutral-50/50 transition">
+                          <td className="p-3">
+                            <span className="font-bold text-neutral-800 block">{tabItem.label}</span>
+                            <span className="text-[10px] text-neutral-400 font-medium block mt-0.5">{tabItem.desc}</span>
+                          </td>
+                          <td className="p-3 text-center">
+                            <label className="inline-flex items-center justify-center cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={perm.student}
+                                onChange={(e) => {
+                                  const updated = {
+                                    ...tabPermissions,
+                                    [tabItem.id]: { ...perm, student: e.target.checked }
+                                  };
+                                  onUpdatePermissions(updated);
+                                  showSaveToast();
+                                }}
+                                className="w-4.5 h-4.5 rounded border-neutral-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                              />
+                            </label>
+                          </td>
+                          <td className="p-3 text-center">
+                            <label className="inline-flex items-center justify-center cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={perm.guest}
+                                onChange={(e) => {
+                                  const updated = {
+                                    ...tabPermissions,
+                                    [tabItem.id]: { ...perm, guest: e.target.checked }
+                                  };
+                                  onUpdatePermissions(updated);
+                                  showSaveToast();
+                                }}
+                                className="w-4.5 h-4.5 rounded border-neutral-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                              />
+                            </label>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Save indicator toast message */}
+              <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
+                <p className="text-[10px] text-neutral-400 font-medium">
+                  * Lưu ý: Giáo viên luôn có toàn quyền xem toàn bộ các mục trên.
+                </p>
+                <AnimatePresence>
+                  {showPermissionsToast && (
+                    <motion.span
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      className="text-[10px] font-bold text-emerald-600 flex items-center space-x-1"
+                    >
+                      <span>✓ Tự động lưu cấu hình thành công!</span>
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </div>
