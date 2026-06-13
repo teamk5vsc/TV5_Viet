@@ -549,7 +549,28 @@ export default function AIOutlineHelper({
       }
       setComparison(data);
     } catch (err) {
-      console.warn('Gemini comparison failed, using client-side fallback:', err);
+      console.warn('Gemini comparison failed, trying direct client fallback:', err);
+      if (apiKey) {
+        try {
+          const directData = await callGeminiApiDirectly({
+            action: 'compare',
+            topic: customTopic,
+            type: selectedGenreId,
+            outlineBefore: v1Outline,
+            outlineAfter: v2Outline,
+            scoreBefore: v1Grade?.score || 68,
+            skillsBefore: v1Grade?.criteriaScores || { understand: 14, structure: 14, development: 16, creativity: 12, logic: 9 },
+            model: selectedModel,
+            apiKey
+          });
+          setComparison(directData);
+          setIsGradingV2(false);
+          return;
+        } catch (directErr) {
+          console.error('Direct client-side Gemini comparison failed:', directErr);
+        }
+      }
+
       const scoreBefore = v1Grade?.score || 68;
       const scoreAfter = Math.min(scoreBefore + 15, 96);
       const scoreDiff = scoreAfter - scoreBefore;
@@ -597,30 +618,7 @@ export default function AIOutlineHelper({
           logic: Math.min((v1Grade?.criteriaScores.logic || 9) + 2, 15)
         },
         feedback: currentFeedback
-      };
-
-      if (apiKey) {
-        try {
-          const directData = await callGeminiApiDirectly({
-            action: 'compare',
-            topic: customTopic,
-            type: selectedGenreId,
-            outlineBefore: v1Outline,
-            outlineAfter: v2Outline,
-            scoreBefore: v1Grade?.score || 68,
-            skillsBefore: v1Grade?.criteriaScores || { understand: 14, structure: 14, development: 16, creativity: 12, logic: 9 },
-            model: selectedModel,
-            apiKey
-          });
-          setComparison(directData);
-          setIsGradingV2(false);
-          return;
-        } catch (directErr) {
-          console.error('Direct client-side Gemini comparison failed:', directErr);
-        }
-      }
-
-      setComparison(localMockData);
+      });
     } finally {
       setIsGradingV2(false);
     }
