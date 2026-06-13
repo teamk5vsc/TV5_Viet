@@ -1,0 +1,6 @@
+{
+  "name": "VietMaster 5 – Bản đồ ý tưởng viết văn",
+  "description": "Ứng dụng thông minh hỗ trợ học sinh lớp 5 học tập, thực hành lập dàn ý Tiếng Việt theo chuẩn kiến thức, tích hợp AI đánh giá và so sánh mức độ tiến bộ.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

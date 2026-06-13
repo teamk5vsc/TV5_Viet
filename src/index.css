@@ -1,0 +1,311 @@
+@import 'tailwindcss';
+
+/* ============================================= */
+/* VietMaster 5 - Design System                  */
+/* Warm, playful, child-friendly for grade 5     */
+/* ============================================= */
+
+@theme {
+  --font-heading: 'Outfit', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  
+  /* Warm education palette */
+  --color-vm-sun-50: #fffbeb;
+  --color-vm-sun-100: #fef3c7;
+  --color-vm-sun-200: #fde68a;
+  --color-vm-sun-300: #fcd34d;
+  --color-vm-sun-400: #fbbf24;
+  --color-vm-sun-500: #f59e0b;
+  --color-vm-sun-600: #d97706;
+  --color-vm-sun-700: #b45309;
+  
+  --color-vm-sky-50: #f0f9ff;
+  --color-vm-sky-100: #e0f2fe;
+  --color-vm-sky-200: #bae6fd;
+  --color-vm-sky-300: #7dd3fc;
+  --color-vm-sky-400: #38bdf8;
+  --color-vm-sky-500: #0ea5e9;
+  
+  --color-vm-leaf-50: #f0fdf4;
+  --color-vm-leaf-100: #dcfce7;
+  --color-vm-leaf-200: #bbf7d0;
+  --color-vm-leaf-300: #86efac;
+  --color-vm-leaf-400: #4ade80;
+  --color-vm-leaf-500: #22c55e;
+  
+  --color-vm-berry-50: #fdf2f8;
+  --color-vm-berry-100: #fce7f3;
+  --color-vm-berry-200: #fbcfe8;
+  --color-vm-berry-300: #f9a8d4;
+  --color-vm-berry-400: #f472b6;
+  --color-vm-berry-500: #ec4899;
+  
+  --color-vm-grape-50: #faf5ff;
+  --color-vm-grape-100: #f3e8ff;
+  --color-vm-grape-200: #e9d5ff;
+  --color-vm-grape-300: #d8b4fe;
+  --color-vm-grape-400: #c084fc;
+  --color-vm-grape-500: #a855f7;
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: linear-gradient(180deg, #fffbeb 0%, #fefce8 30%, #f0fdf4 60%, #faf5ff 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* Hide scrollbar but keep scroll functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom scrollbar for content areas */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #d1d5db;
+}
+
+/* ============================================= */
+/* Animations                                    */
+/* ============================================= */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-5px) rotate(2deg); }
+  66% { transform: translateY(-3px) rotate(-1deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.95); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  50% { transform: scale(1.2) rotate(180deg); opacity: 0.8; }
+}
+
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-float-slow { animation: float-slow 5s ease-in-out infinite; }
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+.animate-pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
+.animate-bounce-in { animation: bounce-in 0.5s ease-out; }
+.animate-slide-up { animation: slide-up 0.4s ease-out; }
+.animate-wiggle { animation: wiggle 1s ease-in-out infinite; }
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
+.animate-sparkle { animation: sparkle 2s ease-in-out infinite; }
+
+/* ============================================= */
+/* Special UI Components                         */
+/* ============================================= */
+
+/* Glass morphism card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #f59e0b, #ec4899, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-warm {
+  background: linear-gradient(135deg, #f59e0b, #d97706, #b45309);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Fun decorative blob backgrounds */
+.blob-bg::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(251,191,36,0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blob-bg::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Tab active indicator animation */
+.tab-active-indicator {
+  position: relative;
+}
+.tab-active-indicator::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+}
+
+/* Card hover lift effect */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 10px -6px rgba(0, 0, 0, 0.04);
+}
+
+/* Score circle glow */
+.score-glow {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.2), 0 0 40px rgba(245, 158, 11, 0.1);
+}
+
+/* Modal overlay */
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Playful border with gradient */
+.border-gradient {
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+}
+.border-gradient::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #fbbf24, #ec4899, #a855f7);
+  z-index: -1;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  padding: 2px;
+}
+
+/* Fun emoji badge */
+.emoji-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  font-size: 1.25rem;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  box-shadow: 0 2px 8px rgba(251,191,36,0.2);
+}
+
+/* Selection highlight */
+::selection {
+  background: #fde68a;
+  color: #92400e;
+}
+
+/* Focus ring style */
+*:focus-visible {
+  outline: 2px solid #fbbf24;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
