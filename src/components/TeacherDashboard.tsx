@@ -20,6 +20,7 @@ interface TeacherDashboardProps {
   onSaveClass: (info: ClassInfo) => void;
   tabPermissions: Record<string, { student: boolean; guest: boolean }>;
   onUpdatePermissions: (newPermissions: Record<string, { student: boolean; guest: boolean }>) => void;
+  onViewStudentPortfolio?: (student: StudentEntry) => void;
 }
 
 export default function TeacherDashboard({ 
@@ -29,7 +30,8 @@ export default function TeacherDashboard({
   classInfo, 
   onSaveClass,
   tabPermissions,
-  onUpdatePermissions
+  onUpdatePermissions,
+  onViewStudentPortfolio
 }: TeacherDashboardProps) {
   // Class setup state
   const [isEditing, setIsEditing] = useState(!classInfo);
@@ -39,6 +41,10 @@ export default function TeacherDashboard({
     classInfo?.students.map(s => s.name).join('\n') || ''
   );
   
+  // Excel / CSV File upload and parsing state
+  const [isParsingExcel, setIsParsingExcel] = useState(false);
+  const [excelSuccessMsg, setExcelSuccessMsg] = useState<string | null>(null);
+
   // Student detail view
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [reportSuccessMsg, setReportSuccessMsg] = useState<string | null>(null);
@@ -65,6 +71,127 @@ export default function TeacherDashboard({
   const [assignDueDate, setAssignDueDate] = useState('');
 
   const GROUP_EMOJIS = ['🦊', '🦁', '🦉', '🐼', '🐨', '🐝', '🦕', '🐙', '🦄', '🌟', '🎨', '🚀'];
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.name.endsWith('.txt') || file.name.endsWith('.csv')) {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const text = evt.target?.result as string;
+        const names = text.split(/\r?\n/)
+          .map(line => line.trim())
+          .filter(line => line.length > 0 && !line.toLowerCase().includes('họ và tên') && !line.toLowerCase().includes('họ tên') && !line.toLowerCase().includes('danh sách') && !line.toLowerCase().includes('stt'));
+        
+        if (names.length > 0) {
+          setStudentNames(prev => {
+            const current = prev.trim();
+            return current ? `${current}\n${names.join('\n')}` : names.join('\n');
+          });
+          setExcelSuccessMsg(`Đã nhập thành công ${names.length} học sinh từ file text/CSV!`);
+          setTimeout(() => setExcelSuccessMsg(null), 4000);
+        } else {
+          alert('Không tìm thấy danh sách học sinh trong file.');
+        }
+      };
+      reader.readAsText(file, 'UTF-8');
+      e.target.value = '';
+    } else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+      setIsParsingExcel(true);
+      try {
+        const XLSX = await new Promise<any>((resolve, reject) => {
+          if ((window as any).XLSX) {
+            resolve((window as any).XLSX);
+            return;
+          }
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+          script.onload = () => resolve((window as any).XLSX);
+          script.onerror = (err) => reject(err);
+          document.head.appendChild(script);
+        });
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          try {
+            const data = new Uint8Array(evt.target?.result as ArrayBuffer);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
+            
+            const names: string[] = [];
+            let nameColIdx = 0;
+            
+            for (let r = 0; r < Math.min(rows.length, 10); r++) {
+              const row = rows[r];
+              if (!row) continue;
+              let found = false;
+              for (let c = 0; c < row.length; c++) {
+                const val = String(row[c]).toLowerCase().trim();
+                if (val.includes('họ và tên') || val === 'họ tên' || val === 'tên học sinh' || val === 'tên' || val === 'name' || val === 'student name') {
+                  nameColIdx = c;
+                  found = true;
+                  break;
+                }
+              }
+              if (found) break;
+            }
+            
+            for (let i = 0; i < rows.length; i++) {
+              const row = rows[i];
+              if (!row) continue;
+              const cellVal = row[nameColIdx];
+              if (cellVal) {
+                const nameStr = String(cellVal).trim();
+                const lower = nameStr.toLowerCase();
+                if (
+                  lower.length > 0 &&
+                  !lower.includes('họ và tên') &&
+                  lower !== 'họ tên' &&
+                  lower !== 'tên' &&
+                  lower !== 'tên học sinh' &&
+                  lower !== 'name' &&
+                  lower !== 'student name' &&
+                  !lower.includes('danh sách') &&
+                  !lower.includes('stt') &&
+                  isNaN(Number(nameStr))
+                ) {
+                  names.push(nameStr);
+                }
+              }
+            }
+            
+            if (names.length > 0) {
+              setStudentNames(prev => {
+                const current = prev.trim();
+                return current ? `${current}\n${names.join('\n')}` : names.join('\n');
+              });
+              setExcelSuccessMsg(`Đã nhập thành công ${names.length} học sinh từ file Excel!`);
+              setTimeout(() => setExcelSuccessMsg(null), 4000);
+            } else {
+              alert('Không tìm thấy danh sách học sinh hợp lệ trong file Excel. Vui lòng kiểm tra lại cột tên.');
+            }
+          } catch (err) {
+            console.error(err);
+            alert('Lỗi đọc nội dung file Excel.');
+          } finally {
+            setIsParsingExcel(false);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } catch (err) {
+        console.error(err);
+        alert('Không thể tải bộ thư viện đọc Excel từ CDN. Vui lòng kiểm tra kết nối mạng.');
+        setIsParsingExcel(false);
+      }
+      e.target.value = '';
+    } else {
+      alert('Định dạng file không được hỗ trợ. Vui lòng tải file .txt, .csv, .xls hoặc .xlsx');
+      e.target.value = '';
+    }
+  };
 
   const handleSaveClass = () => {
     if (!className.trim()) return;
@@ -268,7 +395,35 @@ export default function TeacherDashboard({
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-neutral-700">👥 Danh sách học sinh <span className="text-neutral-400">(mỗi em 1 dòng)</span></label>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <label className="text-xs font-bold text-neutral-700">👥 Danh sách học sinh <span className="text-neutral-400">(mỗi em 1 dòng)</span></label>
+                
+                {/* Excel / Text Uploader */}
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="file"
+                    id="excel-upload-input"
+                    accept=".xlsx,.xls,.csv,.txt"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="excel-upload-input"
+                    className="inline-flex items-center space-x-1 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-[11px] font-bold rounded-xl transition cursor-pointer select-none"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-amber-700" />
+                    <span>{isParsingExcel ? 'Đang đọc file...' : 'Nhập từ file Excel/CSV/TXT 📁'}</span>
+                  </label>
+                </div>
+              </div>
+
+              {excelSuccessMsg && (
+                <div className="p-2.5 bg-emerald-50 border border-emerald-100 text-emerald-800 text-xs rounded-xl font-medium flex items-center space-x-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>{excelSuccessMsg}</span>
+                </div>
+              )}
+
               <textarea
                 value={studentNames}
                 onChange={(e) => setStudentNames(e.target.value)}
@@ -595,13 +750,22 @@ export default function TeacherDashboard({
                         </p>
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleSendToParent(selectedStudent.name)}
-                      className="flex items-center space-x-1 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold rounded-xl text-xs transition shadow-md cursor-pointer"
-                    >
-                      <Mail className="w-4 h-4" />
-                      <span>Gửi thư phụ huynh 📧</span>
-                    </button>
+                    <div className="flex flex-wrap gap-2 justify-end">
+                      <button
+                        onClick={() => handleSendToParent(selectedStudent.name)}
+                        className="flex items-center space-x-1 px-3 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold rounded-xl text-xs transition shadow-md cursor-pointer"
+                      >
+                        <Mail className="w-4 h-4" />
+                        <span>Gửi thư phụ huynh 📧</span>
+                      </button>
+                      <button
+                        onClick={() => onViewStudentPortfolio?.(selectedStudent)}
+                        className="flex items-center space-x-1 px-3 py-2 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold rounded-xl text-xs transition shadow-md cursor-pointer"
+                      >
+                        <Award className="w-4 h-4" />
+                        <span>Xem Portfolio 🏆</span>
+                      </button>
+                    </div>
                   </div>
 
                   {reportSuccessMsg && (

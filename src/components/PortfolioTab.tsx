@@ -14,9 +14,10 @@ const PAST_SUBMISSIONS_MOCK: OutlineSubmission[] = [];
 interface PortfolioTabProps {
   studentProfile: StudentProfile;
   customSavedOutlines: OutlineSubmission[];
+  isTeacher?: boolean;
 }
 
-export default function PortfolioTab({ studentProfile, customSavedOutlines }: PortfolioTabProps) {
+export default function PortfolioTab({ studentProfile, customSavedOutlines, isTeacher = false }: PortfolioTabProps) {
   // Combine static and custom saved outlines
   const allSubmissions = [...customSavedOutlines, ...PAST_SUBMISSIONS_MOCK];
   
@@ -35,6 +36,13 @@ export default function PortfolioTab({ studentProfile, customSavedOutlines }: Po
 
   return (
     <div className="space-y-6">
+      {/* Teacher notice if viewing guest portfolio */}
+      {isTeacher && studentProfile.id === 'guest' && (
+        <div className="p-4 bg-blue-50 border border-blue-150 text-blue-900 text-xs rounded-xl font-medium flex items-center space-x-2">
+          <span>💡 Bạn đang ở chế độ Giáo viên. Hãy vào mục <strong>Chế độ Giáo viên</strong> &rarr; Chọn học sinh &rarr; Click <strong>Xem Portfolio 🏆</strong> để xem báo cáo năng lực và tiến trình chi tiết của học sinh đó.</span>
+        </div>
+      )}
+
       {/* Student Banner Overview */}
       <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-amber-100/50 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center space-x-4">
@@ -223,32 +231,36 @@ export default function PortfolioTab({ studentProfile, customSavedOutlines }: Po
           </div>
 
           {/* Writer Portrait */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50/30 p-5 rounded-2xl border border-amber-200/50 shadow-sm space-y-2">
-            <div className="flex items-center space-x-1.5 text-amber-900 font-bold text-xs uppercase tracking-wider">
-              <User className="w-4 h-4 text-amber-600" />
-              <span>Chân dung người viết {studentProfile.name}</span>
+          {isTeacher && (
+            <div className="bg-gradient-to-br from-amber-50 to-orange-50/30 p-5 rounded-2xl border border-amber-200/50 shadow-sm space-y-2">
+              <div className="flex items-center space-x-1.5 text-amber-900 font-bold text-xs uppercase tracking-wider">
+                <User className="w-4 h-4 text-amber-600" />
+                <span>Chân dung người viết {studentProfile.name}</span>
+              </div>
+              <p className="text-xs text-amber-800 font-medium leading-relaxed italic">
+                "{studentProfile.name} là học sinh có khả năng quan sát thiên nhiên rất sinh động. Thích viết lồng ghép các bài học triết lý ngộ nghĩnh và biết lắng nghe, tiếp thu chi tiết đắt giá từ huấn luyện viên AI để vượt hạng ngoạn mục."
+              </p>
             </div>
-            <p className="text-xs text-amber-800 font-medium leading-relaxed italic">
-              "{studentProfile.name} là học sinh có khả năng quan sát thiên nhiên rất sinh động. Thích viết lồng ghép các bài học triết lý ngộ nghĩnh và biết lắng nghe, tiếp thu chi tiết đắt giá từ huấn luyện viên AI để vượt hạng ngoạn mục."
-            </p>
-          </div>
+          )}
         </div>
 
         {/* Right Column: Historical timeline & Printable parent report */}
         <div className="lg:col-span-2 space-y-6">
           {/* Toggle Parent Report Button */}
-          <div className="flex justify-end space-x-3">
-            <button
-              onClick={() => setShowParentReport(!showParentReport)}
-              className="flex items-center space-x-1.5 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-bold rounded-xl border border-neutral-200 transition cursor-pointer select-none"
-            >
-              <Printer className="w-4 h-4 text-neutral-500" />
-              <span>{showParentReport ? 'Quay về lịch sử học' : 'Xem Báo Cáo Phụ Huynh 👩‍👦'}</span>
-            </button>
-          </div>
+          {isTeacher && (
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowParentReport(!showParentReport)}
+                className="flex items-center space-x-1.5 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-bold rounded-xl border border-neutral-200 transition cursor-pointer select-none"
+              >
+                <Printer className="w-4 h-4 text-neutral-500" />
+                <span>{showParentReport ? 'Quay về lịch sử học' : 'Xem Báo Cáo Phụ Huynh 👩‍👦'}</span>
+              </button>
+            </div>
+          )}
 
           <AnimatePresence mode="wait">
-            {showParentReport ? (
+            {showParentReport && isTeacher ? (
               /* PANEL A: Printable parent report */
               <motion.div
                 key="parent-report"

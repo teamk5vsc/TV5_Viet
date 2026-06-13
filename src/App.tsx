@@ -1146,6 +1146,7 @@ export default function App() {
               <PortfolioTab 
                 studentProfile={currentStudent ? buildStudentProfile(currentStudent, customSavedOutlines, classInfo?.className) : buildStudentProfile({ id: 'guest', name: 'Khách', avatar: '🎒' }, [], classInfo?.className)} 
                 customSavedOutlines={customSavedOutlines} 
+                isTeacher={isTeacherAuthenticated}
               />
             </motion.div>
           )}
@@ -1166,6 +1167,13 @@ export default function App() {
                 onSaveClass={handleSaveClass}
                 tabPermissions={tabPermissions}
                 onUpdatePermissions={handleUpdatePermissions}
+                onViewStudentPortfolio={(student) => {
+                  setCurrentStudent(student);
+                  localStorage.setItem('vm5_current_student', student.id);
+                  const saved = localStorage.getItem(`vm5_submissions_${student.id}`);
+                  setCustomSavedOutlines(saved ? JSON.parse(saved) : []);
+                  setActiveTab('portfolio');
+                }}
               />
             </motion.div>
           )}
