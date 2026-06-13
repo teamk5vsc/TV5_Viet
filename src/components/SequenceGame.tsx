@@ -66,6 +66,48 @@ const SEQUENCE_EXERCISES = {
     { text: '❸ Thân bài (Dẫn chứng thực tế): Ví dụ bài văn của em tăng từ 6 lên 8.5 điểm nhờ cô phụ đạo thầm lặng.', correctIndex: 2 },
     { text: '❹ Thân bài (Phản biện trái chiều): Tất nhiên chúng ta cũng cần chú trọng nghỉ ngơi, chừa thời giờ thể chất tự do.', correctIndex: 3 },
     { text: '❺ Kết bài: Học thêm đúng nhịp chính là bệ phóng tự tin tỏa sáng năng lực thích đáng.', correctIndex: 4 }
+  ],
+  'cam-xuc-cau-chuyen': [
+    { text: '❶ Mở bài: Giới thiệu câu chuyện "Bông hoa cúc trắng" và hoàn cảnh được đọc cảm xúc.', correctIndex: 0 },
+    { text: '❷ Thân bài (Tóm tắt): Sự việc người mẹ bị bệnh nặng, người con đi tìm thuốc chữa cứu mẹ.', correctIndex: 1 },
+    { text: '❸ Thân bài (Cảm xúc): Cảm động xót xa trước lòng hiếu thảo thiêng liêng của cô bé dành cho mẹ.', correctIndex: 2 },
+    { text: '❹ Thân bài (Chi tiết lay động): Cô bé xé nhỏ từng cánh hoa cúc để mẹ được sống thêm nhiều năm.', correctIndex: 3 },
+    { text: '❺ Kết bài: Thầm tự hứa luôn ngoan ngoãn, hiếu thảo để đền đáp công lao cha mẹ.', correctIndex: 4 }
+  ],
+  'cam-xuc-bai-tho': [
+    { text: '❶ Mở bài: Dẫn dắt giới thiệu bài thơ "Hạt gạo làng ta" đầy kỷ niệm của Trần Đăng Khoa.', correctIndex: 0 },
+    { text: '❷ Thân bài (Hình ảnh đẹp): Cảm nhận vị phù sa, hương sen thơm quyện trong từng hạt gạo quê hương.', correctIndex: 1 },
+    { text: '❸ Thân bài (Xúc động): Nhớ về nỗi vất vả của mẹ cha, "giọt mồ hôi sa những trưa tháng sáu".`', correctIndex: 2 },
+    { text: '❹ Thân bài (Nhạc điệu): Giai điệu thơ tha thiết gợi tình cảm gia đình, quê hương sâu đậm.', correctIndex: 3 },
+    { text: '❺ Kết bài: Thêm trân quý hạt gạo quê mình và biết ơn người nông dân lao động tảo tần.', correctIndex: 4 }
+  ],
+  'gioi-thieu-nhan-vat-sach': [
+    { text: '❶ Mở bài: Giới thiệu nhân vật Harry Potter trong cuốn sách cùng tên em say mê đọc học học.', correctIndex: 0 },
+    { text: '❷ Thân bài (Hoàn cảnh): Cậu bé mồ côi bước vào thế giới phù thủy đầy thử thách cam go.', correctIndex: 1 },
+    { text: '❸ Thân bài (Tính cách): Sự dũng cảm, thông minh vượt trội khi đối đầu hiểm nguy hiểm nghèo.', correctIndex: 2 },
+    { text: '❹ Thân bài (Hành động đẹp): Sẵn sàng xả thân cứu giúp bạn bè Ron và Hermione trong hoạn nạn.', correctIndex: 3 },
+    { text: '❺ Kết bài: Khẳng định tình cảm của em dành cho Harry và khát vọng sống quả cảm.', correctIndex: 4 }
+  ],
+  'gioi-thieu-nhan-vat-hoat-hinh': [
+    { text: '❶ Mở bài: Giới thiệu nhân vật chú mèo máy Doraemon tốt bụng trong phim hoạt hình cuốn hút.', correctIndex: 0 },
+    { text: '❷ Thân bài (Ngoại hình): Thân hình tròn xoe màu xanh lam đáng yêu, không có tai và có chiếc túi thần kỳ.', correctIndex: 1 },
+    { text: '❸ Thân bài (Bảo bối): Những bảo bối kỳ diệu mở ra chân trời khám phá ước mơ trẻ thơ.', correctIndex: 2 },
+    { text: '❹ Thân bài (Tấm lòng): Doraemon luôn hết lòng bảo vệ và giúp đỡ cậu bạn Nobita hậu hậu đậu.', correctIndex: 3 },
+    { text: '❺ Kết bài: Nêu ước mơ có người bạn như Doraemon và bài học về tình bạn chân thành.', correctIndex: 4 }
+  ],
+  'ta-nguoi': [
+    { text: '❶ Mở bài: Giới thiệu người mẹ kính yêu - người phụ nữ dịu hiền nhất đời em.', correctIndex: 0 },
+    { text: '❷ Thân bài (Ngoại hình): Mái tóc dài mềm mại, đôi mắt lấp lánh nụ cười ấm áp mỗi khi nhìn em.', correctIndex: 1 },
+    { text: '❸ Thân bài (Cử chỉ): Đôi bàn tay gầy guộc thô ráp vì tảo tần chăm lo bữa cơm, manh áo cho gia đình.', correctIndex: 2 },
+    { text: '❹ Thân bài (Tính cách): Sự ân cần chỉ bảo em học bài, chăm sóc em chu đáo mỗi khi ốm đau.', correctIndex: 3 },
+    { text: '❺ Kết bài: Thể hiện lòng biết ơn vô hạn, mong mẹ luôn khỏe mạnh và tự hứa chăm ngoan.', correctIndex: 4 }
+  ],
+  'lap-chuong-trinh-hoat-dong': [
+    { text: '❶ Mở bài (Mục đích): Góp phần dọn dẹp phòng học khang trang sạch đẹp để chuẩn bị đón năm học mới.', correctIndex: 0 },
+    { text: '❷ Thân bài (Chuẩn bị): Phân chia chổi, khăn lau, xô nước và tập hợp các bạn đúng giờ.', correctIndex: 1 },
+    { text: '❸ Thân bài (Phân công): Nhóm 1 lau bảng và cửa sổ, Nhóm 2 quét nhà, Nhóm 3 lau dọn bàn ghế.', correctIndex: 2 },
+    { text: '❹ Thân bài (Diễn biến): Mọi người cùng bắt tay dọn dẹp nhịp nhàng, tiếng cười nói rộn rã.', correctIndex: 3 },
+    { text: '❺ Kết bài (Ý nghĩa): Cả lớp sạch sẽ thơm tho, thắt chặt thêm tình đoàn kết bè bạn.', correctIndex: 4 }
   ]
 };
 
@@ -267,13 +309,14 @@ export default function SequenceGame() {
                   <button
                     key={genre.id}
                     onClick={() => setSelectedGenreId(genre.id as EssayType)}
-                    className={`py-2 px-1 text-center font-bold text-[10.5px] rounded-lg border transition cursor-pointer ${
+                    className={`py-2.5 px-2 text-center font-bold text-[10px] rounded-xl border transition cursor-pointer flex items-center justify-center gap-1 min-h-[50px] leading-tight ${
                       isSelected
-                        ? 'bg-amber-100 text-amber-900 border-amber-300'
-                        : 'bg-neutral-50 hover:bg-neutral-100 text-neutral-600 border-neutral-100'
+                        ? 'bg-amber-100 text-amber-900 border-amber-300 shadow-sm'
+                        : 'bg-neutral-50 hover:bg-neutral-100 hover:text-neutral-800 text-neutral-600 border-neutral-200/60'
                     }`}
                   >
-                    {genre.emoji} {genre.title.split(' ')[0]}
+                    <span className="shrink-0">{genre.emoji}</span>
+                    <span>{genre.title}</span>
                   </button>
                 );
               })}

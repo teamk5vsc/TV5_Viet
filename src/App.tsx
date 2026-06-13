@@ -144,24 +144,89 @@ export default function App() {
   // Teacher authentication and locking
   const [teacherPassword, setTeacherPassword] = useState(() => localStorage.getItem('vm5_teacher_password') || '1234');
   const [tempTeacherPassword, setTempTeacherPassword] = useState('');
-  const [isTeacherAuthenticated, setIsTeacherAuthenticated] = useState(false);
+  const [isTeacherAuthenticated, setIsTeacherAuthenticated] = useState(() => {
+    return sessionStorage.getItem('vm5_is_teacher') === 'true';
+  });
   const [showTeacherUnlockModal, setShowTeacherUnlockModal] = useState(false);
   const [teacherUnlockInput, setTeacherUnlockInput] = useState('');
   const [teacherUnlockError, setTeacherUnlockError] = useState(false);
 
-  // Show modal on first load if no API key
+  // Unique teacher UUID for telemetry tracking
+  const [teacherId, setTeacherId] = useState(() => {
+    let tid = localStorage.getItem('vm5_teacher_id');
+    if (!tid) {
+      tid = `t_${Math.random().toString(36).substring(2, 11)}_${Date.now()}`;
+      localStorage.setItem('vm5_teacher_id', tid);
+    }
+    return tid;
+  });
+
+  // Admin authentication states
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
+    return sessionStorage.getItem('vm5_is_admin') === 'true';
+  });
+  const [showAdminUnlockModal, setShowAdminUnlockModal] = useState(false);
+  const [adminUnlockInput, setAdminUnlockInput] = useState('');
+  const [adminUnlockError, setAdminUnlockError] = useState(false);
+  const [adminStats, setAdminStats] = useState<any[]>([]);
+  const [isAdminLoading, setIsAdminLoading] = useState(false);
+
+  // Telemetry: Ping backend to track teacher usage
+  const trackTeacherUsage = async (cls: ClassInfo | null) => {
+    try {
+      const tid = localStorage.getItem('vm5_teacher_id') || teacherId;
+      await fetch('/api/admin/track-use', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          teacherId: tid,
+          schoolName: cls?.schoolName || 'Chưa cập nhật',
+          className: cls?.className || 'Chưa cập nhật',
+          studentCount: cls?.students?.length || 0
+        })
+      });
+    } catch (err) {
+      console.error('Failed to send usage statistics:', err);
+    }
+  };
+
+  // Telemetry: Fetch all statistics for Admin Dashboard
+  const fetchAdminStats = async () => {
+    setIsAdminLoading(true);
+    try {
+      const response = await fetch('/api/admin/stats', {
+        headers: {
+          'x-admin-key': 'admin9999'
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setAdminStats(data.stats || []);
+      } else {
+        console.error('Failed to fetch admin stats:', response.statusText);
+      }
+    } catch (err) {
+      console.error('Error fetching admin stats:', err);
+    } finally {
+      setIsAdminLoading(false);
+    }
+  };
+
+  // Auto-fetch admin stats when authenticated as admin
   useEffect(() => {
-    if (!apiKey) {
+    if (isAdminAuthenticated) {
+      fetchAdminStats();
+    }
+  }, [isAdminAuthenticated]);
+
+  // Show settings modal on first load if teacher is authenticated but has no API key
+  useEffect(() => {
+    if (isTeacherAuthenticated && !apiKey) {
       setShowSettingsModal(true);
     }
-  }, []);
-
-  // Auto-lock teacher mode when not on the teacher tab or when selecting student picker
-  useEffect(() => {
-    if (activeTab !== 'teacher' || showStudentPicker) {
-      setIsTeacherAuthenticated(false);
-    }
-  }, [activeTab, showStudentPicker]);
+  }, [isTeacherAuthenticated]);
 
   // Auto-redirect unauthorized users away from teacher tab or disabled tabs
   useEffect(() => {
@@ -172,18 +237,17 @@ export default function App() {
       return;
     }
 
-    if (isTeacherAuthenticated) return;
+    if (isTeacherAuthenticated || isAdminAuthenticated) return;
 
     const role = currentStudent ? 'student' : 'guest';
     const isAllowed = tabPermissions[activeTab]?.[role] !== false;
     if (!isAllowed) {
-      // Find the first allowed tab
       const firstAllowed = tabs.find(tab => tabPermissions[tab.id]?.[role] !== false);
       if (firstAllowed) {
         setActiveTab(firstAllowed.id);
       }
     }
-  }, [activeTab, isTeacherAuthenticated, classInfo, currentStudent, tabPermissions]);
+  }, [activeTab, isTeacherAuthenticated, isAdminAuthenticated, classInfo, currentStudent, tabPermissions]);
 
   const handleSaveSettings = () => {
     if (tempApiKey.trim()) {
@@ -196,6 +260,32 @@ export default function App() {
     }
     localStorage.setItem('vm5_model', selectedModel);
     setShowSettingsModal(false);
+  };
+
+  const handleTeacherUnlockSubmit = () => {
+    if (teacherUnlockInput === teacherPassword) {
+      setIsTeacherAuthenticated(true);
+      sessionStorage.setItem('vm5_is_teacher', 'true');
+      trackTeacherUsage(classInfo);
+      setActiveTab('teacher');
+      setShowTeacherUnlockModal(false);
+      setTeacherUnlockInput('');
+      setTeacherUnlockError(false);
+    } else {
+      setTeacherUnlockError(true);
+    }
+  };
+
+  const handleAdminUnlockSubmit = () => {
+    if (adminUnlockInput === 'admin9999') {
+      setIsAdminAuthenticated(true);
+      sessionStorage.setItem('vm5_is_admin', 'true');
+      setShowAdminUnlockModal(false);
+      setAdminUnlockInput('');
+      setAdminUnlockError(false);
+    } else {
+      setAdminUnlockError(true);
+    }
   };
 
   const handleUpdatePermissions = (newPermissions: Record<string, { student: boolean; guest: boolean }>) => {
@@ -242,6 +332,17 @@ export default function App() {
   const handleSaveClass = (info: ClassInfo) => {
     setClassInfo(info);
     localStorage.setItem('vm5_class_info', JSON.stringify(info));
+    trackTeacherUsage(info);
+  };
+
+  const handleLogout = () => {
+    setCurrentStudent(null);
+    setIsTeacherAuthenticated(false);
+    setIsAdminAuthenticated(false);
+    sessionStorage.removeItem('vm5_is_teacher');
+    sessionStorage.removeItem('vm5_is_admin');
+    localStorage.removeItem('vm5_current_student');
+    setActiveTab('syllabus');
   };
 
   // Get active assignments for the current student
@@ -261,6 +362,517 @@ export default function App() {
     { id: 'detective' as const, label: '🕵️ Thám tử bắt lỗi', icon: Search, color: 'text-rose-500' },
     { id: 'portfolio' as const, label: '🏆 Portfolio Tiến Bộ', icon: Award, color: 'text-purple-500' },
   ];
+
+  // Helper to render student picker modal
+  const renderStudentPicker = () => {
+    if (!classInfo) {
+      return (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 modal-overlay bg-black/40 backdrop-blur-xs"
+          onClick={() => setShowStudentPicker(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-md space-y-4 text-center"
+          >
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-heading font-extrabold text-neutral-800">🎒 Chọn học sinh</h2>
+              <button onClick={() => setShowStudentPicker(false)} className="p-2 hover:bg-neutral-100 rounded-xl transition cursor-pointer">
+                <X className="w-5 h-5 text-neutral-400" />
+              </button>
+            </div>
+            <div className="py-6 space-y-2">
+              <span className="text-5xl block">🏫</span>
+              <p className="text-sm font-bold text-neutral-700">Lớp học chưa được thiết lập</p>
+              <p className="text-xs text-neutral-500 leading-relaxed">
+                Vui lòng báo cô giáo/thầy giáo đăng nhập bằng tài khoản Giáo viên để thiết lập danh sách lớp trước nhé!
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 modal-overlay bg-black/40 backdrop-blur-xs"
+        onClick={() => { setShowStudentPicker(false); setPickerStep('select'); setPinInput(''); setPinError(false); }}
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-md space-y-5 max-h-[80vh] overflow-y-auto"
+        >
+          {pickerStep === 'select' ? (
+            <>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-heading font-extrabold text-neutral-800">🎒 Em tên gì nhỉ?</h2>
+                  <p className="text-xs text-neutral-500">{classInfo.className} • Chọn tên của em</p>
+                </div>
+                <button onClick={() => { setShowStudentPicker(false); setPickerStep('select'); }} className="p-2 hover:bg-neutral-100 rounded-xl transition cursor-pointer">
+                  <X className="w-5 h-5 text-neutral-400" />
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-2 max-h-[40vh] overflow-y-auto pr-1">
+                {classInfo.students.map((student) => {
+                  const isActive = currentStudent?.id === student.id;
+                  return (
+                    <button
+                      key={student.id}
+                      onClick={() => { setPickerStudent(student); setPickerStep('pin'); setPinInput(''); setPinError(false); }}
+                      className={`p-3 rounded-xl border text-left transition cursor-pointer flex items-center space-x-2 ${
+                        isActive 
+                          ? 'bg-amber-50 border-amber-300 ring-2 ring-amber-200' 
+                          : 'bg-white hover:bg-neutral-50 border-neutral-200 hover:border-amber-200'
+                      }`}
+                    >
+                      <span className="text-2xl">{student.avatar}</span>
+                      <span className="text-xs font-bold text-neutral-800 truncate">{student.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center space-x-3">
+                <button 
+                  onClick={() => { setPickerStep('select'); setPinInput(''); setPinError(false); }}
+                  className="p-2 hover:bg-neutral-100 rounded-xl transition cursor-pointer"
+                >
+                  <ArrowLeft className="w-5 h-5 text-neutral-400" />
+                </button>
+                <div>
+                  <h2 className="text-lg font-heading font-extrabold text-neutral-800">🔐 Nhập mã PIN</h2>
+                  <p className="text-xs text-neutral-500">Xác nhận em là <strong>{pickerStudent?.name}</strong></p>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center space-y-4 py-4">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-3xl">
+                  {pickerStudent?.avatar}
+                </div>
+                <p className="text-sm font-heading font-bold text-neutral-800">{pickerStudent?.name}</p>
+                
+                <div className="relative w-48">
+                  <input
+                    type="password"
+                    inputMode="numeric"
+                    maxLength={4}
+                    value={pinInput}
+                    onChange={(e) => { setPinInput(e.target.value.replace(/\D/g, '').slice(0, 4)); setPinError(false); }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && pinInput.length === 4 && pickerStudent) {
+                        if (pinInput === pickerStudent.pin) {
+                          handleSelectStudent(pickerStudent);
+                          setPickerStep('select');
+                          setPinInput('');
+                        } else {
+                          setPinError(true);
+                        }
+                      }
+                    }}
+                    placeholder="• • • •"
+                    className={`w-full text-center text-2xl font-mono font-bold tracking-[0.5em] py-3 rounded-xl border-2 focus:outline-none transition ${
+                      pinError ? 'border-red-400 bg-red-50 animate-wiggle' : 'border-neutral-200 focus:border-amber-400 bg-neutral-50 focus:bg-white'
+                    }`}
+                    autoFocus
+                  />
+                  <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-300" />
+                </div>
+
+                {pinError && (
+                  <p className="text-xs text-red-500 font-bold">❌ Sai mã PIN! Hỏi cô giáo để lấy mã nhé.</p>
+                )}
+                <p className="text-[10px] text-neutral-400">Nhập 4 số mã PIN cô giáo đã phát cho em</p>
+
+                <button
+                  onClick={() => {
+                    if (pickerStudent && pinInput === pickerStudent.pin) {
+                      handleSelectStudent(pickerStudent);
+                      setPickerStep('select');
+                      setPinInput('');
+                    } else {
+                      setPinError(true);
+                    }
+                  }}
+                  disabled={pinInput.length !== 4}
+                  className="w-48 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-xl text-sm transition shadow-md cursor-pointer disabled:opacity-40 flex items-center justify-center space-x-2"
+                >
+                  <span>Vào học thôi! 🚀</span>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // Helper to render teacher unlock modal contents
+  const renderTeacherUnlockModal = () => {
+    return (
+      <div
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 modal-overlay bg-black/40 backdrop-blur-xs"
+        onClick={() => { setShowTeacherUnlockModal(false); }}
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-sm space-y-5"
+        >
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+              <Lock className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <h2 className="text-sm font-heading font-extrabold text-neutral-800">👩‍🏫 Xác minh Giáo viên</h2>
+              <p className="text-[11px] text-neutral-500">Vui lòng nhập mật mã giáo viên</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center space-y-4 py-2">
+            <div className="relative w-full">
+              <input
+                type="password"
+                placeholder="Mật mã Giáo viên..."
+                value={teacherUnlockInput}
+                onChange={(e) => { setTeacherUnlockInput(e.target.value); setTeacherUnlockError(false); }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleTeacherUnlockSubmit();
+                  }
+                }}
+                className={`w-full text-center text-lg font-bold py-2.5 rounded-xl border-2 focus:outline-none transition ${
+                  teacherUnlockError ? 'border-red-400 bg-red-50' : 'border-neutral-200 focus:border-blue-400 bg-neutral-50 focus:bg-white'
+                }`}
+                autoFocus
+              />
+              <Shield className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-300" />
+            </div>
+
+            {teacherUnlockError && (
+              <p className="text-xs text-red-500 font-bold">❌ Mật mã chưa đúng! Hãy thử lại nhé.</p>
+            )}
+            <p className="text-[10px] text-neutral-400 text-center font-medium leading-relaxed">
+              * Lưu ý: Đây là khu vực dành riêng cho Giáo viên để quản lý lớp học.
+            </p>
+
+            <div className="flex space-x-2 w-full pt-2">
+              <button
+                onClick={() => setShowTeacherUnlockModal(false)}
+                className="flex-1 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 font-bold rounded-xl text-xs transition cursor-pointer"
+              >
+                Hủy bỏ
+              </button>
+              <button
+                onClick={handleTeacherUnlockSubmit}
+                className="flex-1 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold rounded-xl text-xs transition shadow-md cursor-pointer"
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Helper to render admin unlock modal contents
+  const renderAdminUnlockModal = () => {
+    return (
+      <div
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 modal-overlay bg-black/40 backdrop-blur-xs"
+        onClick={() => { setShowAdminUnlockModal(false); }}
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-sm space-y-5"
+        >
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center">
+              <Lock className="w-5 h-5 text-purple-600" />
+            </div>
+            <div>
+              <h2 className="text-sm font-heading font-extrabold text-neutral-800">🔑 Xác minh Quản trị viên</h2>
+              <p className="text-[11px] text-neutral-500">Nhập mật mã Admin để xem thống kê</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center space-y-4 py-2">
+            <div className="relative w-full">
+              <input
+                type="password"
+                placeholder="Mật mã Admin..."
+                value={adminUnlockInput}
+                onChange={(e) => { setAdminUnlockInput(e.target.value); setAdminUnlockError(false); }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleAdminUnlockSubmit();
+                  }
+                }}
+                className={`w-full text-center text-lg font-bold py-2.5 rounded-xl border-2 focus:outline-none transition ${
+                  adminUnlockError ? 'border-red-400 bg-red-50' : 'border-neutral-200 focus:border-purple-400 bg-neutral-50 focus:bg-white'
+                }`}
+                autoFocus
+              />
+              <Shield className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-300" />
+            </div>
+
+            {adminUnlockError && (
+              <p className="text-xs text-red-500 font-bold">❌ Mật mã Admin chưa đúng! Hãy thử lại nhé.</p>
+            )}
+
+            <div className="flex space-x-2 w-full pt-2">
+              <button
+                onClick={() => setShowAdminUnlockModal(false)}
+                className="flex-1 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 font-bold rounded-xl text-xs transition cursor-pointer"
+              >
+                Hủy bỏ
+              </button>
+              <button
+                onClick={handleAdminUnlockSubmit}
+                className="flex-1 py-2.5 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold rounded-xl text-xs transition shadow-md cursor-pointer"
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Early return: Render Cổng Đăng Nhập (Login Portal) if not authenticated
+  if (!currentStudent && !isTeacherAuthenticated && !isAdminAuthenticated) {
+    return (
+      <div className="min-h-screen flex flex-col justify-between bg-gradient-to-br from-amber-50 via-orange-50/30 to-rose-50 font-body text-neutral-800 antialiased">
+        <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 h-2 w-full" />
+        
+        <div className="flex-1 flex flex-col items-center justify-center px-4 py-12 max-w-4xl mx-auto w-full">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center mb-8 space-y-4"
+          >
+            <div className="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-gradient-to-br from-amber-400 via-orange-400 to-rose-400 shadow-xl text-5xl mb-2 select-none">
+              🦉
+            </div>
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-heading font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 tracking-tight">
+                VietMaster 5
+              </h1>
+              <p className="text-sm font-semibold text-neutral-500 uppercase tracking-widest mt-1">
+                Cổng Học Tập & Dạy Học Tiếng Việt Lớp 5
+              </p>
+              <p className="text-xs text-neutral-400 max-w-md mx-auto mt-2 leading-relaxed">
+                Hệ thống rèn luyện lập bản đồ ý tưởng, viết văn tự động với AI và đo lường sự tiến bộ dành riêng cho lớp 5.
+              </p>
+            </div>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl px-2">
+            <motion.div
+              whileHover={{ scale: 1.03, y: -4 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-white/90 backdrop-blur-sm p-6 rounded-3xl border border-amber-100 shadow-lg hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between text-left relative overflow-hidden group"
+              onClick={() => {
+                setPickerStep('select');
+                setShowStudentPicker(true);
+              }}
+            >
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-100/50 to-transparent rounded-bl-full group-hover:scale-110 transition-transform" />
+              <div className="space-y-4 relative z-10">
+                <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-3xl">
+                  🎒
+                </div>
+                <div>
+                  <h3 className="text-lg font-heading font-extrabold text-neutral-800 flex items-center space-x-1">
+                    <span>Học sinh Đăng nhập</span>
+                    <span className="text-amber-500 group-hover:translate-x-1 transition-transform">→</span>
+                  </h3>
+                  <p className="text-xs text-neutral-500 mt-1.5 leading-relaxed">
+                    Vào lớp học để phác thảo dàn ý, viết văn cùng Cú Văn thông thái, chơi trò chơi sắp đặt và xem portfolio của mình.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-6 pt-4 border-t border-neutral-100 text-xs font-bold text-amber-600 flex items-center space-x-1">
+                <span>Chọn tên & nhập mã PIN</span>
+              </div>
+            </motion.div>
+
+            <motion.div
+              whileHover={{ scale: 1.03, y: -4 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-white/90 backdrop-blur-sm p-6 rounded-3xl border border-blue-100 shadow-lg hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between text-left relative overflow-hidden group"
+              onClick={() => {
+                setTeacherUnlockInput('');
+                setTeacherUnlockError(false);
+                setShowTeacherUnlockModal(true);
+              }}
+            >
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-blue-100/50 to-transparent rounded-bl-full group-hover:scale-110 transition-transform" />
+              <div className="space-y-4 relative z-10">
+                <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-3xl">
+                  👩‍🏫
+                </div>
+                <div>
+                  <h3 className="text-lg font-heading font-extrabold text-neutral-800 flex items-center space-x-1">
+                    <span>Giáo viên Đăng nhập</span>
+                    <span className="text-blue-500 group-hover:translate-x-1 transition-transform">→</span>
+                  </h3>
+                  <p className="text-xs text-neutral-500 mt-1.5 leading-relaxed">
+                    Quản lý học sinh lớp học, chia nhóm học tập, giao nhiệm vụ viết văn, cấu hình quyền truy cập và xem báo cáo năng lực.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-6 pt-4 border-t border-neutral-100 text-xs font-bold text-blue-600 flex items-center space-x-1">
+                <span>Nhập mã bảo vệ giáo viên</span>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        <div className="py-6 border-t border-amber-100/40 text-center space-y-2">
+          <p className="text-[10px] text-neutral-400 font-medium">
+            © {new Date().getFullYear()} VietMaster 5 • Ms. Ngọc Mai
+          </p>
+          <button
+            onClick={() => {
+              setAdminUnlockInput('');
+              setAdminUnlockError(false);
+              setShowAdminUnlockModal(true);
+            }}
+            className="text-[11px] text-neutral-450 hover:text-amber-600 font-bold transition flex items-center space-x-1 mx-auto cursor-pointer border-none bg-transparent"
+          >
+            <span>Dành cho Quản trị viên 🔑</span>
+          </button>
+        </div>
+
+        {showStudentPicker && renderStudentPicker()}
+        {showTeacherUnlockModal && renderTeacherUnlockModal()}
+        {showAdminUnlockModal && renderAdminUnlockModal()}
+
+        <div className="absolute top-24 left-10 text-3xl opacity-[0.05] animate-float select-none pointer-events-none">🌸</div>
+        <div className="absolute bottom-24 right-12 text-3xl opacity-[0.05] animate-float-slow select-none pointer-events-none">🍃</div>
+      </div>
+    );
+  }
+
+  // Early return: Render Bảng điều khiển Quản trị (Admin Dashboard) if authenticated as admin
+  if (isAdminAuthenticated) {
+    return (
+      <div className="min-h-screen flex flex-col font-body bg-neutral-50 text-neutral-800 antialiased">
+        <header className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <span className="text-3xl bg-white/20 p-2 rounded-2xl">🔑</span>
+              <div>
+                <h1 className="text-xl font-heading font-black">Bảng điều khiển Quản trị viên</h1>
+                <p className="text-xs text-white/80 font-medium mt-0.5">Theo dõi hoạt động của hệ thống VietMaster 5</p>
+              </div>
+            </div>
+            
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-1.5 bg-white/20 hover:bg-white/30 text-white border border-white/20 py-2 px-4 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer"
+            >
+              <span>Đăng xuất Cổng Admin 🚪</span>
+            </button>
+          </div>
+        </header>
+
+        <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white rounded-3xl border border-neutral-100 shadow-sm p-6 flex items-center space-x-4">
+              <div className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl font-bold">👩‍🏫</div>
+              <div>
+                <p className="text-xs text-neutral-450 font-bold uppercase tracking-wider">Tổng Giáo viên</p>
+                <h3 className="text-2xl font-heading font-black text-neutral-800">{adminStats.length}</h3>
+              </div>
+            </div>
+            <div className="bg-white rounded-3xl border border-neutral-100 shadow-sm p-6 flex items-center space-x-4">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl font-bold">🎒</div>
+              <div>
+                <p className="text-xs text-neutral-450 font-bold uppercase tracking-wider">Tổng Học sinh quản lý</p>
+                <h3 className="text-2xl font-heading font-black text-neutral-800">
+                  {adminStats.reduce((acc, curr) => acc + (curr.studentCount || 0), 0)}
+                </h3>
+              </div>
+            </div>
+            <div className="bg-white rounded-3xl border border-neutral-100 shadow-sm p-6 flex items-center space-x-4">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl font-bold">📈</div>
+              <div>
+                <p className="text-xs text-neutral-450 font-bold uppercase tracking-wider">Tổng lượt hoạt động</p>
+                <h3 className="text-2xl font-heading font-black text-neutral-800">
+                  {adminStats.reduce((acc, curr) => acc + (curr.useCount || 0), 0)}
+                </h3>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl border border-neutral-100 shadow-md p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-neutral-100 pb-4">
+              <div>
+                <h2 className="text-base font-heading font-extrabold text-neutral-800">Danh sách các Lớp & Trường học đang sử dụng</h2>
+                <p className="text-xs text-neutral-500 mt-0.5">Thống kê dữ liệu hoạt động tự động gửi từ trình duyệt của Giáo viên.</p>
+              </div>
+              <button
+                onClick={fetchAdminStats}
+                disabled={isAdminLoading}
+                className="px-4 py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded-xl text-xs transition cursor-pointer flex items-center space-x-2"
+              >
+                <span>{isAdminLoading ? 'Đang tải...' : 'Làm mới ↻'}</span>
+              </button>
+            </div>
+
+            {isAdminLoading ? (
+              <div className="text-center py-12 text-neutral-450">
+                <p className="text-xs">Đang tải dữ liệu thống kê...</p>
+              </div>
+            ) : adminStats.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left text-neutral-700">
+                  <thead className="text-[10px] uppercase font-bold text-neutral-450 bg-neutral-50/70 border-b border-neutral-250/50">
+                    <tr>
+                      <th className="p-4">STT</th>
+                      <th className="p-4">Trường học</th>
+                      <th className="p-4">Lớp học</th>
+                      <th className="p-4 text-center">Sĩ số</th>
+                      <th className="p-4 text-center">Số lượt hoạt động</th>
+                      <th className="p-4">Hoạt động cuối</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-100">
+                    {adminStats.map((record, index) => (
+                      <tr key={record.teacherId} className="hover:bg-neutral-50/50 transition">
+                        <td className="p-4 font-bold text-neutral-450">{index + 1}</td>
+                        <td className="p-4 font-extrabold text-neutral-800">{record.schoolName || 'Chưa cập nhật'}</td>
+                        <td className="p-4 font-bold text-indigo-600">{record.className || 'Chưa cập nhật'}</td>
+                        <td className="p-4 text-center font-bold">{record.studentCount || 0} em</td>
+                        <td className="p-4 text-center font-bold text-emerald-600">{record.useCount || 0} lần</td>
+                        <td className="p-4 text-neutral-500 font-medium">
+                          {record.lastActive ? new Date(record.lastActive).toLocaleString('vi-VN') : '—'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="text-center py-12 text-neutral-400">
+                <span className="text-4xl block mb-2">📊</span>
+                <p className="text-xs">Chưa có dữ liệu thống kê giáo viên nào.</p>
+              </div>
+            )}
+          </div>
+        </main>
+
+        <footer className="py-6 border-t border-neutral-200/50 text-center text-xs text-neutral-400 font-medium mt-auto">
+          © {new Date().getFullYear()} VietMaster 5 • Hệ thống Quản trị Bảo mật
+        </footer>
+      </div>
+    );
+  }
 
   const allowedTabs = tabs.filter(tab => {
     if (isTeacherAuthenticated) return true;
@@ -296,29 +908,35 @@ export default function App() {
               </div>
             </div>
 
-            {/* Right side: Student badge + Settings */}
+            {/* Right side: Active Role & Logout */}
             <div className="flex items-center space-x-3">
-              {/* Student chip — clickable to switch */}
-              {currentStudent ? (
+              {/* Active Role Indicator */}
+              {isTeacherAuthenticated ? (
+                <div className="flex items-center space-x-1.5 bg-white/20 backdrop-blur-sm border border-white/30 py-1.5 px-3 rounded-xl text-white">
+                  <span className="text-xs font-black">👩‍🏫 Giáo viên</span>
+                </div>
+              ) : currentStudent ? (
                 <button
-                  onClick={() => setShowStudentPicker(true)}
-                  className="hidden sm:flex items-center space-x-2 bg-white/20 backdrop-blur-sm border border-white/30 py-1.5 px-3 rounded-xl hover:bg-white/30 transition cursor-pointer"
+                  onClick={() => {
+                    setPickerStep('select');
+                    setShowStudentPicker(true);
+                  }}
+                  className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm border border-white/30 py-1.5 px-3 rounded-xl hover:bg-white/30 transition cursor-pointer"
                 >
                   <span className="text-sm">{currentStudent.avatar}</span>
                   <span className="text-xs font-bold text-white">{currentStudent.name}</span>
                   <span className="text-[10px] text-white/70">▾</span>
                 </button>
-              ) : (
-                <button
-                  onClick={() => setShowStudentPicker(true)}
-                  className="hidden sm:flex items-center space-x-2 bg-white/20 backdrop-blur-sm border border-white/30 py-1.5 px-3 rounded-xl hover:bg-white/30 transition cursor-pointer"
-                >
-                  <UserPlus className="w-4 h-4 text-white" />
-                  <span className="text-xs font-bold text-white">Chọn học sinh</span>
-                </button>
-              )}
+              ) : null}
 
-
+              {/* Logout / Switch Role Button */}
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-1.5 bg-white/20 hover:bg-white text-white hover:text-rose-600 border border-white/30 hover:border-transparent py-1.5 px-3 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer"
+                title="Đổi vai trò / Đăng xuất"
+              >
+                <span>Đổi vai trò 🚪</span>
+              </button>
             </div>
           </div>
         </div>
@@ -333,7 +951,6 @@ export default function App() {
                   <motion.button
                     key={tab.id}
                     onClick={() => {
-                      setIsTeacherAuthenticated(false);
                       setActiveTab(tab.id);
                     }}
                     whileHover={{ scale: 1.03 }}
@@ -358,30 +975,28 @@ export default function App() {
               })}
 
               {/* Separator */}
-              <span className="w-px bg-neutral-200/80 self-stretch my-1.5 mx-1" />
+              {isTeacherAuthenticated && (
+                <span className="w-px bg-neutral-200/80 self-stretch my-1.5 mx-1" />
+              )}
 
               {/* Teacher tab - separated */}
-              <motion.button
-                onClick={() => {
-                  if (isTeacherAuthenticated) {
+              {isTeacherAuthenticated && (
+                <motion.button
+                  onClick={() => {
                     setActiveTab('teacher');
-                  } else {
-                    setTeacherUnlockInput('');
-                    setTeacherUnlockError(false);
-                    setShowTeacherUnlockModal(true);
-                  }
-                }}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className={`px-4 py-2.5 text-xs font-bold rounded-xl flex items-center space-x-2 transition-all cursor-pointer select-none whitespace-nowrap ${
-                  activeTab === 'teacher'
-                    ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-900 border border-blue-200/80 shadow-sm'
-                    : 'text-neutral-500 hover:text-neutral-800 hover:bg-neutral-50/80 border border-transparent'
-                }`}
-              >
-                <Users className={`w-4 h-4 ${activeTab === 'teacher' ? 'text-blue-600' : ''}`} />
-                <span>👩🏫 Chế độ Giáo viên</span>
-              </motion.button>
+                  }}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className={`px-4 py-2.5 text-xs font-bold rounded-xl flex items-center space-x-2 transition-all cursor-pointer select-none whitespace-nowrap ${
+                    activeTab === 'teacher'
+                      ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-900 border border-blue-200/80 shadow-sm'
+                      : 'text-neutral-500 hover:text-neutral-800 hover:bg-neutral-50/80 border border-transparent'
+                  }`}
+                >
+                  <Users className={`w-4 h-4 ${activeTab === 'teacher' ? 'text-blue-600' : ''}`} />
+                  <span>👩‍🏫 Chế độ Giáo viên</span>
+                </motion.button>
+              )}
             </div>
           </div>
         </div>
@@ -725,7 +1340,7 @@ export default function App() {
                   <div className="relative">
                     <input
                       type="text"
-                      placeholder="Mật mã mặc định là 1234..."
+                      placeholder="Nhập mật mã bảo vệ mới..."
                       value={tempTeacherPassword}
                       onChange={(e) => setTempTeacherPassword(e.target.value)}
                       className="w-full py-3 px-4 pr-10 text-sm font-medium text-neutral-800 placeholder-neutral-400 bg-neutral-50 rounded-xl border-2 border-neutral-100 focus:border-amber-400 focus:bg-white focus:outline-none transition"
@@ -733,7 +1348,7 @@ export default function App() {
                     <Shield className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-300" />
                   </div>
                   <p className="text-[10px] text-neutral-400 font-medium">
-                    Học sinh sẽ cần nhập mật mã này để vào tab Chế độ Giáo viên. Mặc định ban đầu là 1234.
+                    Thiết lập mật mã riêng của Giáo viên để hạn chế học sinh tự ý truy cập các nội dung quản lý lớp học.
                   </p>
                 </div>
               </div>
@@ -763,218 +1378,17 @@ export default function App() {
 
       {/* ===== STUDENT PICKER MODAL WITH PIN ===== */}
       <AnimatePresence>
-        {showStudentPicker && classInfo && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 modal-overlay"
-            onClick={() => { setShowStudentPicker(false); setPickerStep('select'); setPinInput(''); setPinError(false); }}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-md space-y-5 max-h-[80vh] overflow-y-auto"
-            >
-              {pickerStep === 'select' ? (
-                /* Step 1: Choose name */
-                <>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h2 className="text-lg font-heading font-extrabold text-neutral-800">🎒 Em tên gì nhỉ?</h2>
-                      <p className="text-xs text-neutral-500">{classInfo.className} • Chọn tên của em</p>
-                    </div>
-                    <button onClick={() => { setShowStudentPicker(false); setPickerStep('select'); }} className="p-2 hover:bg-neutral-100 rounded-xl transition cursor-pointer">
-                      <X className="w-5 h-5 text-neutral-400" />
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {classInfo.students.map((student) => {
-                      const isActive = currentStudent?.id === student.id;
-                      return (
-                        <button
-                          key={student.id}
-                          onClick={() => { setPickerStudent(student); setPickerStep('pin'); setPinInput(''); setPinError(false); }}
-                          className={`p-3 rounded-xl border text-left transition cursor-pointer flex items-center space-x-2 ${
-                            isActive 
-                              ? 'bg-amber-50 border-amber-300 ring-2 ring-amber-200' 
-                              : 'bg-white hover:bg-neutral-50 border-neutral-200 hover:border-amber-200'
-                          }`}
-                        >
-                          <span className="text-2xl">{student.avatar}</span>
-                          <span className="text-xs font-bold text-neutral-800 truncate">{student.name}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </>
-              ) : (
-                /* Step 2: Enter PIN */
-                <>
-                  <div className="flex items-center space-x-3">
-                    <button 
-                      onClick={() => { setPickerStep('select'); setPinInput(''); setPinError(false); }}
-                      className="p-2 hover:bg-neutral-100 rounded-xl transition cursor-pointer"
-                    >
-                      <ArrowLeft className="w-5 h-5 text-neutral-400" />
-                    </button>
-                    <div>
-                      <h2 className="text-lg font-heading font-extrabold text-neutral-800">🔐 Nhập mã PIN</h2>
-                      <p className="text-xs text-neutral-500">Xác nhận em là <strong>{pickerStudent?.name}</strong></p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col items-center space-y-4 py-4">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-3xl">
-                      {pickerStudent?.avatar}
-                    </div>
-                    <p className="text-sm font-heading font-bold text-neutral-800">{pickerStudent?.name}</p>
-                    
-                    <div className="relative w-48">
-                      <input
-                        type="password"
-                        inputMode="numeric"
-                        maxLength={4}
-                        value={pinInput}
-                        onChange={(e) => { setPinInput(e.target.value.replace(/\D/g, '').slice(0, 4)); setPinError(false); }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && pinInput.length === 4 && pickerStudent) {
-                            if (pinInput === pickerStudent.pin) {
-                              handleSelectStudent(pickerStudent);
-                              setPickerStep('select');
-                              setPinInput('');
-                            } else {
-                              setPinError(true);
-                            }
-                          }
-                        }}
-                        placeholder="• • • •"
-                        className={`w-full text-center text-2xl font-mono font-bold tracking-[0.5em] py-3 rounded-xl border-2 focus:outline-none transition ${
-                          pinError ? 'border-red-400 bg-red-50 animate-wiggle' : 'border-neutral-200 focus:border-amber-400 bg-neutral-50 focus:bg-white'
-                        }`}
-                        autoFocus
-                      />
-                      <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-300" />
-                    </div>
-
-                    {pinError && (
-                      <p className="text-xs text-red-500 font-bold animate-bounce-in">❌ Sai mã PIN! Hỏi cô giáo để lấy mã nhé.</p>
-                    )}
-                    <p className="text-[10px] text-neutral-400">Nhập 4 số mã PIN cô giáo đã phát cho em</p>
-
-                    <button
-                      onClick={() => {
-                        if (pickerStudent && pinInput === pickerStudent.pin) {
-                          handleSelectStudent(pickerStudent);
-                          setPickerStep('select');
-                          setPinInput('');
-                        } else {
-                          setPinError(true);
-                        }
-                      }}
-                      disabled={pinInput.length !== 4}
-                      className="w-48 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-xl text-sm transition shadow-md cursor-pointer disabled:opacity-40 flex items-center justify-center space-x-2"
-                    >
-                      <span>Vào học thôi! 🚀</span>
-                    </button>
-                  </div>
-                </>
-              )}
-            </motion.div>
-          </motion.div>
-        )}
+        {showStudentPicker && renderStudentPicker()}
       </AnimatePresence>
 
       {/* ===== TEACHER DASHBOARD PASSCODE UNLOCK MODAL ===== */}
       <AnimatePresence>
-        {showTeacherUnlockModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 modal-overlay"
-            onClick={() => { setShowTeacherUnlockModal(false); }}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-sm space-y-5"
-            >
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
-                  <Lock className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <h2 className="text-sm font-heading font-extrabold text-neutral-800">👩‍🏫 Xác minh Giáo viên</h2>
-                  <p className="text-[11px] text-neutral-500">Vui lòng nhập mật mã giáo viên</p>
-                </div>
-              </div>
+        {showTeacherUnlockModal && renderTeacherUnlockModal()}
+      </AnimatePresence>
 
-              <div className="flex flex-col items-center space-y-4 py-2">
-                <div className="relative w-full">
-                  <input
-                    type="password"
-                    placeholder="Mật mã Giáo viên..."
-                    value={teacherUnlockInput}
-                    onChange={(e) => { setTeacherUnlockInput(e.target.value); setTeacherUnlockError(false); }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        if (teacherUnlockInput === teacherPassword) {
-                          setIsTeacherAuthenticated(true);
-                          setActiveTab('teacher');
-                          setShowTeacherUnlockModal(false);
-                        } else {
-                          setTeacherUnlockError(true);
-                        }
-                      }
-                    }}
-                    className={`w-full text-center text-lg font-bold py-2.5 rounded-xl border-2 focus:outline-none transition ${
-                      teacherUnlockError ? 'border-red-400 bg-red-50' : 'border-neutral-200 focus:border-blue-400 bg-neutral-50 focus:bg-white'
-                    }`}
-                    autoFocus
-                  />
-                  <Shield className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-300" />
-                </div>
-
-                {teacherUnlockError && (
-                  <p className="text-xs text-red-500 font-bold">❌ Mật mã chưa đúng! Hãy thử lại nhé.</p>
-                )}
-                <p className="text-[10px] text-neutral-400 text-center font-medium leading-relaxed">
-                  * Mật mã mặc định là <strong className="text-neutral-600">1234</strong>. Bạn có thể thay đổi mật mã này trong phần Cấu hình hệ thống.
-                </p>
-
-                <div className="flex space-x-2 w-full pt-2">
-                  <button
-                    onClick={() => setShowTeacherUnlockModal(false)}
-                    className="flex-1 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 font-bold rounded-xl text-xs transition cursor-pointer"
-                  >
-                    Hủy bỏ
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (teacherUnlockInput === teacherPassword) {
-                        setIsTeacherAuthenticated(true);
-                        setActiveTab('teacher');
-                        setShowTeacherUnlockModal(false);
-                      } else {
-                        setTeacherUnlockError(true);
-                      }
-                    }}
-                    className="flex-1 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold rounded-xl text-xs transition shadow-md cursor-pointer"
-                  >
-                    Xác nhận
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
+      {/* ===== ADMIN UNLOCK MODAL ===== */}
+      <AnimatePresence>
+        {showAdminUnlockModal && renderAdminUnlockModal()}
       </AnimatePresence>
 
       {/* ===== NO CLASS SETUP PROMPT ===== */}

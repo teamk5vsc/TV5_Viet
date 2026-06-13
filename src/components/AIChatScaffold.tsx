@@ -35,6 +35,12 @@ export default function AIChatScaffold({ topic, genreId, apiKey, selectedModel }
       'cam-xuc-nhan-vat': '🦉 Chào bạn nhỏ! Mình là Cú Văn đây! Chúng mình cùng viết bày tỏ tình cảm về một nhân vật nhé. Em sẵn sàng chưa? Hãy cho mình biết nhân vật nào để lại cho em nhiều cảm xúc nhất?',
       'cam-xuc-su-viec': '🦉 Chào bạn nhỏ! Mình là Cú Văn đây! Mỗi sự việc ý nghĩa quanh ta đều chứa đựng nhiều cảm xúc. Bạn đã sẵn sàng chưa? Hãy kể cho mình biết sự việc hay hoạt động nào em muốn bày tỏ tình cảm hôm nay?',
       'neu-y-kien': '🦉 Chào bạn nhỏ! Mình là Cú Văn đây! Hôm nay chúng mình sẽ lập luận để bày tỏ ý kiến đồng tình / phản đối trước một vấn đề nhé. Em sẵn sàng chưa? Cho mình biết vấn đề nghị luận em định bàn tới là gì thế?',
+      'cam-xuc-cau-chuyen': '🦉 Chào bạn nhỏ! Mình là Cú Văn đây! Hôm nay chúng mình sẽ cùng bày tỏ cảm xúc về một câu chuyện đầy ý nghĩa nhé. Bạn đã sẵn sàng chưa? Cho mình biết tên câu chuyện em muốn chia sẻ nào?',
+      'cam-xuc-bai-tho': '🦉 Chào bạn nhỏ! Mình là Cú Văn đây! Những vần thơ ngọt ngào luôn chứa đựng nhiều xúc cảm. Hôm nay chúng mình sẽ viết cảm xúc về một bài thơ nhé. Em muốn chia sẻ bài thơ nào thế?',
+      'gioi-thieu-nhan-vat-sach': '🦉 Chào bạn nhỏ! Mình là Cú Văn đây! Hôm nay chúng mình sẽ cùng giới thiệu một nhân vật ấn tượng trong một cuốn sách em đã đọc nhé. Nhân vật đó tên là gì và ở cuốn sách nào vậy em?',
+      'gioi-thieu-nhan-vat-hoat-hinh': '🦉 Chào bạn nhỏ! Mình là Cú Văn đây! Thế giới hoạt hình chứa đựng bao sắc màu kỳ diệu. Hôm nay chúng mình sẽ cùng giới thiệu một nhân vật hoạt hình em yêu thích nhé. Đó là nhân vật nào vậy ta?',
+      'ta-nguoi': '🦉 Chào bạn nhỏ! Mình là Cú Văn đây! Hôm nay chúng mình sẽ cùng tả một người gần gũi, yêu thương trong cuộc sống của em nhé. Người em định miêu tả là ai thế?',
+      'lap-chuong-trinh-hoat-dong': '🦉 Chào bạn nhỏ! Mình là Cú Văn đây! Việc lập kế hoạch sẽ giúp các hoạt động tập thể diễn ra thật trơn tru. Hôm nay chúng mình sẽ cùng lập một chương trình hoạt động nhé. Em định tổ chức hoạt động nào?',
     };
     
     const welcomeText = welcomeMessages[genreId] || welcomeMessages['ta-canh'];
@@ -278,6 +284,276 @@ export default function AIChatScaffold({ topic, genreId, apiKey, selectedModel }
               content: [
                 'Khẳng định lại ý kiến, quan điểm của bản thân về vấn đề.',
                 'Đưa ra thông điệp hoặc lời khuyên bổ ích, kêu gọi mọi người cùng nhận thức.'
+              ] 
+            } 
+          }
+        ],
+        'cam-xuc-cau-chuyen': [
+          { 
+            reply: '🦉 Bạn nhỏ hãy giới thiệu tên câu chuyện và hoàn cảnh em đã đọc hoặc được nghe kể câu chuyện này nhé.', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Hoàn cảnh đọc truyện rất thú vị! Tiếp theo, chi tiết hoặc tình huống nào trong câu chuyện gây ấn tượng mạnh nhất với bạn nhỏ?', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Thật là một chi tiết đắt giá! Mình gợi ý phần Mở bài nhé. Vậy nhân vật nào trong câu chuyện làm em cảm kích, xót thương hoặc khâm phục nhất?', 
+            suggestedOutlinePart: { 
+              section: 'mobi', 
+              content: [
+                `Giới thiệu tên câu chuyện em định bày tỏ cảm nghĩ: ${topic || 'Câu chuyện ý nghĩa'}`,
+                'Nêu hoàn cảnh đọc/nghe kể và ấn tượng bao quát ban đầu.'
+              ] 
+            } 
+          },
+          { 
+            reply: '🦉 Nhân vật thật đáng trân trọng! Sau câu chuyện này, bạn nhỏ đã rút ra bài học ý nghĩa nào cho bản thân mình?', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Bài học thật sâu sắc! Đây là gợi ý phần Thân bài. Cuối cùng, bạn nhỏ muốn khẳng định lại tình cảm của mình với câu chuyện đó thế nào?', 
+            suggestedOutlinePart: { 
+              section: 'thanbi', 
+              content: [
+                'Tóm tắt ngắn sự việc khơi nguồn cảm xúc chính.',
+                'Phân tích chi tiết cảm xúc với từng nhân vật/tình huống nổi bật.',
+                'Nêu ý nghĩa nhân văn hay thông điệp câu chuyện mang lại.'
+              ] 
+            } 
+          },
+          { 
+            reply: '🦉 Một tình cảm thật bền chặt! Gửi em gợi ý phần Kết bài để hoàn chỉnh dàn ý của mình.', 
+            suggestedOutlinePart: { 
+              section: 'ketbi', 
+              content: [
+                'Khẳng định giá trị câu chuyện theo thời gian và tình cảm dành cho tác phẩm.',
+                'Rút ra bài học đạo đức, lời hứa rèn luyện của bản thân.'
+              ] 
+            } 
+          }
+        ],
+        'cam-xuc-bai-tho': [
+          { 
+            reply: '🦉 Tên bài thơ và tác giả em chọn là gì? Nhạc điệu hay hình ảnh thơ nào nhen nhóm cảm xúc đầu tiên trong lòng em?', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Một tác phẩm rất hay! Bây giờ, em ấn tượng nhất với những hình ảnh thiên nhiên hay con người nào được vẽ lên trong bài thơ?', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Các hình ảnh thơ rất giàu sức gợi! Mình gửi ý Mở bài nhé. Tiếp theo, nhịp điệu hay vần điệu của bài thơ gợi cho em cảm giác như thế nào (êm đềm, thiết tha, dồn dập...)?', 
+            suggestedOutlinePart: { 
+              section: 'mobi', 
+              content: [
+                `Giới thiệu tên bài thơ và tác giả: ${topic || 'Bài thơ yêu thích'}`,
+                'Bộc lộ ấn tượng chung bao quát đầu tiên.'
+              ] 
+            } 
+          },
+          { 
+            reply: '🦉 Vần thơ nghe réo rắt quá! Bài thơ này đã đánh thức hay khơi gợi tình cảm nào sâu sắc nhất trong tâm hồn bạn nhỏ (tình yêu gia đình, quê hương...)?', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Tình cảm thật đẹp và trong sáng! Đây là gợi ý Thân bài. Cuối cùng, bạn nhỏ thấy bài thơ này có giá trị hay ý nghĩa thế nào đối với tâm hồn tuổi thơ của em?', 
+            suggestedOutlinePart: { 
+              section: 'thanbi', 
+              content: [
+                'Cảm nhận hình ảnh thơ đẹp và độc đáo nhất.',
+                'Cảm nhận nhạc điệu, vần thơ réo rắt gợi cảm.',
+                'Phân tích những từ ngữ đắt giá bộc lộ tình thương và sự đồng điệu của tác giả.'
+              ] 
+            } 
+          },
+          { 
+            reply: '🦉 Tuyệt vời! Gửi bạn nhỏ gợi ý phần Kết bài để hoàn thành dàn ý cảm xúc về bài thơ.', 
+            suggestedOutlinePart: { 
+              section: 'ketbi', 
+              content: [
+                'Khẳng định sức sống của bài thơ trong lòng em và sự trân trọng tác giả.',
+                'Nêu ý nghĩa của bài thơ đối với đời sống tinh thần của em.'
+              ] 
+            } 
+          }
+        ],
+        'gioi-thieu-nhan-vat-sach': [
+          { 
+            reply: '🦉 Cuốn sách em chọn giới thiệu là sách gì? Hãy nêu tên nhân vật chính gây ấn tượng sâu sắc nhất với em nhé.', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Nhân vật này rất đặc biệt! Bạn nhỏ hãy miêu tả một nét ngoại hình hoặc bối cảnh xuất hiện độc đáo nhất của nhân vật nhé.', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Ngoại hình thật sống động! Gợi ý phần Mở bài đây nha. Vậy phẩm chất hay nét tính cách đáng quý nào của nhân vật làm em ngưỡng mộ nhất (dũng cảm, tốt bụng...)?', 
+            suggestedOutlinePart: { 
+              section: 'mobi', 
+              content: [
+                `Giới thiệu nhân vật và tên cuốn sách chứa nhân vật đó: ${topic || 'Nhân vật văn học'}`,
+                'Khái quát ấn tượng sâu sắc nhất về nhân vật.'
+              ] 
+            } 
+          },
+          { 
+            reply: '🦉 Tính cách thật tuyệt vời! Em hãy kể lại một hành động hay lời nói cụ thể của nhân vật trong sách thể hiện rõ phẩm chất đó nhé.', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Một dẫn chứng vô cùng thuyết phục! Đây là gợi ý phần Thân bài. Cuối cùng, bạn nhỏ đã học tập được bài học hay rút ra tấm gương rèn luyện nào từ nhân vật này?', 
+            suggestedOutlinePart: { 
+              section: 'thanbi', 
+              content: [
+                'Giới thiệu bối cảnh xuất hiện của nhân vật trong trang sách.',
+                'Miêu tả đặc điểm ngoại hình phản ánh tính cách.',
+                'Khắc họa phẩm chất tốt đẹp thông qua hành động, lời nói cụ thể.'
+              ] 
+            } 
+          },
+          { 
+            reply: '🦉 Lời hứa tự rèn luyện rất đáng quý! Đây là gợi ý phần Kết bài dành cho em.', 
+            suggestedOutlinePart: { 
+              section: 'ketbi', 
+              content: [
+                'Khẳng định giá trị nhân vật truyền cảm hứng tích cực cho người đọc.',
+                'Nêu suy nghĩ tình cảm của em dành cho nhân vật và lời hứa noi gương.'
+              ] 
+            } 
+          }
+        ],
+        'gioi-thieu-nhan-vat-hoat-hinh': [
+          { 
+            reply: '🦉 Nhân vật hoạt hình em muốn giới thiệu thuộc bộ phim nào? Hãy kể tên chú ấy nhé.', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Một bộ phim hoạt hình siêu vui nhộn! Ngoại hình đầy màu sắc hay nét vẽ ngộ nghĩnh nào của nhân vật làm em thích thú nhất?', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Nét vẽ thật ngộ nghĩnh đáng yêu! Đây là gợi ý phần Mở bài nhé. Tiếp theo, nhân vật này có năng lực đặc biệt hay món bảo bối thần kỳ nào thú vị không?', 
+            suggestedOutlinePart: { 
+              section: 'mobi', 
+              content: [
+                `Giới thiệu tên nhân vật và bộ phim hoạt hình tương ứng: ${topic || 'Nhân vật hoạt hình'}`,
+                'Nêu lý do yêu thích chung về nhân vật.'
+              ] 
+            } 
+          },
+          { 
+            reply: '🦉 Các bảo bối nghe thật diệu kỳ! Vậy nét tính cách tốt bụng, vui vẻ hay dũng cảm nào của nhân vật làm em quý mến nhất?', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Tình bạn và tính cách của nhân vật thật ý nghĩa! Gửi em gợi ý phần Thân bài. Cuối cùng, nhân vật hoạt hình này đã mang lại bài học bổ ích hay niềm vui gì cho tuổi thơ của em?', 
+            suggestedOutlinePart: { 
+              section: 'thanbi', 
+              content: [
+                'Miêu tả đặc điểm hình dáng, trang phục ngộ nghĩnh.',
+                'Giới thiệu năng lực đặc biệt hoặc bảo bối kỳ diệu.',
+                'Phân tích tính cách cốt lõi qua các tình huống hài hước, cảm động trong phim.'
+              ] 
+            } 
+          },
+          { 
+            reply: '🦉 Niềm vui tuổi thơ thật ngọt ngào! Mình gửi bạn nhỏ gợi ý phần Kết bài nhé.', 
+            suggestedOutlinePart: { 
+              section: 'ketbi', 
+              content: [
+                'Khẳng định sự yêu mến của em dành cho nhân vật.',
+                'Nêu bài học bổ ích hoặc thông điệp ý nghĩa nhân vật mang lại cho trẻ thơ.'
+              ] 
+            } 
+          }
+        ],
+        'ta-nguoi': [
+          { 
+            reply: '🦉 Người mà em muốn tả là ai thế? Hãy nêu mối quan hệ và ấn tượng lớn nhất của em về người ấy nhé.', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Một người vô cùng thân thương! Em hãy miêu tả một vài nét ngoại hình tiêu biểu nhất (như vóc dáng, mái tóc, nụ cười...) của người ấy nhé.', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Nét tả ngoại hình rất chân thực và xúc động! Gợi ý phần Mở bài đây em. Tiếp theo, cử chỉ hay thói quen hoạt động nào của người ấy thể hiện sự quan tâm, chăm sóc dành cho em?', 
+            suggestedOutlinePart: { 
+              section: 'mobi', 
+              content: [
+                `Giới thiệu người định tả và mối quan hệ thân thiết với em: ${topic || 'Người thân thương'}`,
+                'Nêu ấn tượng bao quát, tình cảm ban đầu dành cho người đó.'
+              ] 
+            } 
+          },
+          { 
+            reply: '🦉 Sự chăm lo thật ấm áp! Em có kỷ niệm sâu đậm nào đáng nhớ nhất gắn liền với người ấy không?', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Kỷ niệm thật ngọt ngào! Đây là gợi ý phần Thân bài văn tả người. Cuối cùng, bạn nhỏ muốn gửi gắm lời chúc hay lời hứa ngoan ngoãn thế nào đến người ấy?', 
+            suggestedOutlinePart: { 
+              section: 'thanbi', 
+              content: [
+                'Tả bao quát độ tuổi, vóc dáng, trang phục thường ngày.',
+                'Tả chi tiết nét mặt, đôi mắt ấm áp và đôi bàn tay lao động lam lũ.',
+                'Tả cử chỉ hoạt động kết hợp kỷ niệm đáng nhớ biểu lộ tình yêu thương chăm sóc.'
+              ] 
+            } 
+          },
+          { 
+            reply: '🦉 Lòng biết ơn thật hiếu kính! Mình gửi em gợi ý phần Kết bài để hoàn chỉnh dàn ý văn tả người nhé.', 
+            suggestedOutlinePart: { 
+              section: 'ketbi', 
+              content: [
+                'Bộc lộ tình cảm yêu mến, kính trọng sâu sắc đối với người được tả.',
+                'Nêu lời tự hứa ngoan ngoãn học tập tốt và mong ước tốt đẹp cho người đó.'
+              ] 
+            } 
+          }
+        ],
+        'lap-chuong-trinh-hoat-dong': [
+          { 
+            reply: '🦉 Hoạt động tập thể em muốn lập kế hoạch là hoạt động gì thế? Mục đích của buổi sinh hoạt này nhằm đạt được điều gì?', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Mục đích rất thiết thực và ý nghĩa! Để bắt đầu, chúng mình cần chuẩn bị những dụng cụ, phương tiện hay ban tổ chức như thế nào?', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Chuẩn bị thật chu đáo! Gửi em gợi ý phần Mở bài nhé. Tiếp theo, em sẽ phân công nhiệm vụ cụ thể cho các nhóm hay cá nhân trong lớp thế nào (ví dụ Tổ 1, Tổ 2 làm gì)?', 
+            suggestedOutlinePart: { 
+              section: 'mobi', 
+              content: [
+                `Nêu tên hoạt động tập thể và mục đích, ý nghĩa của chương trình: ${topic || 'Chương trình hoạt động'}`,
+                'Xác định thời gian, địa điểm tổ chức cụ thể.'
+              ] 
+            } 
+          },
+          { 
+            reply: '🦉 Sự phân công rất rõ ràng và công bằng! Hãy nêu trình tự các bước thực hiện chính (trước, trong và sau hoạt động) theo thời gian nhé.', 
+            suggestedOutlinePart: null 
+          },
+          { 
+            reply: '🦉 Các bước diễn ra rất khoa học và logic! Gửi em gợi ý phần Thân bài chi tiết. Cuối cùng, hoạt động tập thể này sẽ mang lại niềm vui gắn kết hay ý nghĩa gì cho cả lớp?', 
+            suggestedOutlinePart: { 
+              section: 'thanbi', 
+              content: [
+                'Công tác chuẩn bị: dụng cụ, nhân sự, phương tiện đầy đủ.',
+                'Phân công cụ thể công việc rõ ràng cho từng tổ/nhóm.',
+                'Các bước tiến hành chi tiết theo trình tự thời gian hợp lý.'
+              ] 
+            } 
+          },
+          { 
+            reply: '🦉 Tinh thần đoàn kết thật tuyệt vời! Đây là gợi ý phần Kết bài để hoàn thành chương trình hoạt động của em.', 
+            suggestedOutlinePart: { 
+              section: 'ketbi', 
+              content: [
+                'Khẳng định kết quả tốt đẹp và ý nghĩa sâu sắc hoạt động mang lại.',
+                'Nêu ý thức trách nhiệm và niềm vui gắn kết tinh thần đoàn kết tập thể.'
               ] 
             } 
           }

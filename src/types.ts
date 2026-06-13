@@ -3,7 +3,13 @@ export type EssayType =
   | 'ke-chuyen-sang-tao' 
   | 'cam-xuc-nhan-vat' 
   | 'cam-xuc-su-viec' 
-  | 'neu-y-kien';
+  | 'neu-y-kien'
+  | 'cam-xuc-cau-chuyen'
+  | 'cam-xuc-bai-tho'
+  | 'gioi-thieu-nhan-vat-sach'
+  | 'gioi-thieu-nhan-vat-hoat-hinh'
+  | 'ta-nguoi'
+  | 'lap-chuong-trinh-hoat-dong';
 
 export interface EssayMetadata {
   id: EssayType;

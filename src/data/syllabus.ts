@@ -149,7 +149,7 @@ export const SYLLABUS_DATA: EssayMetadata[] = [
   },
   {
     id: 'cam-xuc-su-viec',
-    title: 'Bày tỏ tình cảm về sự việc',
+    title: 'Bày tỏ tình cảm, cảm xúc về một sự việc',
     emoji: '❤️',
     iconName: 'heart',
     iconBg: 'from-red-100 to-orange-100',
@@ -245,6 +245,253 @@ export const SYLLABUS_DATA: EssayMetadata[] = [
         'Công kích gay gắt thô bạo ý kiến khác, thiếu tôn trọng quan điểm đa chiều'
       ]
     }
+  },
+  {
+    id: 'cam-xuc-cau-chuyen',
+    title: 'Bày tỏ cảm xúc về một câu chuyện',
+    emoji: '📖',
+    iconName: 'book-open',
+    iconBg: 'from-blue-100 to-indigo-100',
+    iconColor: 'text-blue-600',
+    description: 'Bày tỏ những rung động, cảm nghĩ chân thành của em về một câu chuyện đầy ý nghĩa đã đọc hoặc được nghe kể.',
+    topics: [
+      'Nêu cảm nghĩ của em về câu chuyện "Sự tích hồ Ba Bể" và tấm lòng của mẹ con bà góa',
+      'Bày tỏ tình cảm, cảm xúc của em sau khi đọc câu chuyện "Một phát minh nho nhỏ"',
+      'Nêu cảm nghĩ về câu chuyện "Bông hoa cúc trắng" và lòng hiếu thảo của người con',
+      'Chia sẻ cảm nhận của em về câu chuyện "Hạt giống tâm hồn" mà em yêu thích nhất'
+    ],
+    template: {
+      mobi: [
+        'Giới thiệu câu chuyện em định bày tỏ cảm xúc (Tên truyện, hoàn cảnh em đọc/nghe)',
+        'Nêu cảm xúc, ấn tượng bao quát nhất'
+      ],
+      thanbi: [
+        '1. Tóm tắt ngắn gọn sự việc chính khơi gợi cảm xúc mạnh mẽ nhất.',
+        '2. Cảm xúc chi tiết của em đối với từng nhân vật hoặc tình huống trong câu chuyện (Cảm kích, thương xót, vui sướng, hay tiếc nuối).',
+        '3. Ý nghĩa sâu sắc của câu chuyện lay động đến tâm hồn em.',
+        '4. Những liên hệ thực tế, bài học bản thân tự rút ra.'
+      ],
+      ketbi: [
+        'Khẳng định lại tình cảm của em đối với câu chuyện và giá trị của câu chuyện đó theo thời gian.'
+      ]
+    },
+    aiRules: {
+      mustHave: [
+        'Nêu rõ tên câu chuyện',
+        'Thể hiện cảm xúc chân thành xuyên suốt',
+        'Rút ra được bài học sâu sắc từ câu chuyện',
+        'Lập luận rõ ràng về ý nghĩa câu chuyện'
+      ],
+      shouldAvoid: [
+        'Kể lại toàn bộ câu chuyện từ đầu đến cuối mà quên bày tỏ cảm xúc',
+        'Nhận xét chung chung không có dẫn chứng sự việc cụ thể'
+      ]
+    }
+  },
+  {
+    id: 'cam-xuc-bai-tho',
+    title: 'Bày tỏ cảm xúc về một bài thơ',
+    emoji: '📜',
+    iconName: 'pen-tool',
+    iconBg: 'from-amber-100 to-yellow-100',
+    iconColor: 'text-amber-600',
+    description: 'Bày tỏ những suy ngẫm, cảm xúc sâu lắng về nhịp điệu, hình ảnh và tình cảm chứa đựng trong một bài thơ em yêu thích.',
+    topics: [
+      'Bày tỏ cảm xúc của em sau khi học bài thơ "Hạt gạo làng ta" của Trần Đăng Khoa',
+      'Cảm xúc của em về tình quê hương ấm áp trong bài thơ "Quê hương"',
+      'Nêu cảm nhận của em về hình ảnh người chiến sĩ trong bài thơ "Tre Việt Nam"',
+      'Chia sẻ rung động của em khi đọc bài thơ "Cánh diều tuổi thơ"'
+    ],
+    template: {
+      mobi: [
+        'Giới thiệu bài thơ (Tên bài thơ, tác giả) và hoàn cảnh tiếp xúc.',
+        'Bộc lộ cảm nghĩ chung nhất về bài thơ.'
+      ],
+      thanbi: [
+        '1. Cảm nhận về hình ảnh thơ đẹp và độc đáo (Hình ảnh thiên nhiên, con người).',
+        '2. Cảm nhận về nhạc điệu, vần điệu của bài thơ gợi cảm giác gì.',
+        '3. Phân tích từ ngữ gợi cảm xúc chân thật, lay động lòng người của bài thơ.',
+        '4. Tình cảm của tác giả gửi gắm và sự đồng cảm của chính em.'
+      ],
+      ketbi: [
+        'Khẳng định giá trị của bài thơ trong lòng em và sự trân trọng đối với tác giả.'
+      ]
+    },
+    aiRules: {
+      mustHave: [
+        'Nêu tên bài thơ và tác giả',
+        'Trích dẫn hoặc chỉ rõ những hình ảnh, từ ngữ đặc sắc trong bài thơ',
+        'Bộc lộ tình cảm sâu sắc của người viết'
+      ],
+      shouldAvoid: [
+        'Chép lại bài thơ mà không phân tích cảm xúc',
+        'Viết lan man không tập trung vào cái hay của ngôn từ nghệ thuật thơ'
+      ]
+    }
+  },
+  {
+    id: 'gioi-thieu-nhan-vat-sach',
+    title: 'Giới thiệu nhân vật trong sách',
+    emoji: '📘',
+    iconName: 'book',
+    iconBg: 'from-teal-100 to-emerald-100',
+    iconColor: 'text-teal-600',
+    description: 'Giới thiệu vẻ đẹp ngoại hình, tính cách đáng quý và những hành động ấn tượng của một nhân vật trong cuốn sách em đã đọc.',
+    topics: [
+      'Giới thiệu nhân vật chú dế Mèn kiêu hãnh nhưng biết sửa sai trong cuốn "Dế Mèn phiêu lưu ký"',
+      'Giới thiệu cậu bé Lượm dũng cảm, hồn nhiên trong tập thơ/truyện cùng tên',
+      'Giới thiệu nhân vật Harry Potter - cậu bé phù thủy quả cảm vượt khó',
+      'Giới thiệu nhân vật bé Thu đầy cá tính và tình yêu cha mãnh liệt trong cuốn sách em đã đọc'
+    ],
+    template: {
+      mobi: [
+        'Giới thiệu nhân vật và cuốn sách chứa nhân vật đó (Tên sách, tác giả).',
+        'Nêu ấn tượng sâu sắc nhất về nhân vật.'
+      ],
+      thanbi: [
+        '1. Giới thiệu sơ lược về hoàn cảnh xuất hiện của nhân vật trong sách.',
+        '2. Miêu tả đặc điểm ngoại hình nổi bật (nếu có) phản ánh tính cách.',
+        '3. Phân tích tính cách và phẩm chất tốt đẹp thông qua hành động, lời nói cụ thể.',
+        '4. Chi tiết ấn tượng nhất về nhân vật khiến em nhớ mãi.',
+        '5. Cảm xúc và suy nghĩ của em dành cho nhân vật.'
+      ],
+      ketbi: [
+        'Khẳng định lại ý nghĩa của nhân vật đó đối với độc giả và tình cảm của em.'
+      ]
+    },
+    aiRules: {
+      mustHave: [
+        'Chỉ rõ tên nhân vật và tên cuốn sách',
+        'Nêu được đặc điểm tính cách nổi bật của nhân vật',
+        'Có ví dụ về hành động hoặc lời nói của nhân vật trong sách để minh họa'
+      ],
+      shouldAvoid: [
+        'Tóm tắt cả cuốn sách mà không tập trung vào nhân vật',
+        'Miêu tả chung chung không gắn liền với chi tiết trong sách'
+      ]
+    }
+  },
+  {
+    id: 'gioi-thieu-nhan-vat-hoat-hinh',
+    title: 'Giới thiệu nhân vật hoạt hình',
+    emoji: '🦄',
+    iconName: 'video',
+    iconBg: 'from-rose-100 to-pink-100',
+    iconColor: 'text-rose-500',
+    description: 'Giới thiệu những nét vẽ sinh động, phép thuật kỳ diệu, tính cách dễ thương hay bài học ý nghĩa từ nhân vật hoạt hình em yêu thích.',
+    topics: [
+      'Giới thiệu nhân vật chú mèo máy Doraemon thông minh, tốt bụng và những bảo bối kỳ diệu',
+      'Giới thiệu chú chuột Mickey vui nhộn, lạc quan trong bộ phim hoạt hình kinh điển',
+      'Giới thiệu nhân vật Elsa - nữ hoàng băng giá xinh đẹp và giàu tình yêu thương em gái',
+      'Giới thiệu nhân vật chú gấu Po vụng về nhưng kiên trì trong "Kung Fu Panda"'
+    ],
+    template: {
+      mobi: [
+        'Giới thiệu tên nhân vật hoạt hình và bộ phim hoạt hình đó.',
+        'Nêu lý do em yêu thích nhân vật.'
+      ],
+      thanbi: [
+        '1. Miêu tả đặc điểm hình dáng bên ngoài đầy sắc màu sinh động (màu sắc, trang phục, biểu cảm).',
+        '2. Giới thiệu năng lực đặc biệt hoặc các món bảo bối, phép thuật (nếu có).',
+        '3. Phân tích tính cách cốt lõi (Vui vẻ, tốt bụng, quả cảm, kiên trì).',
+        '4. Kể lại một tình huống hài hước hoặc cảm động nhất của nhân vật trong phim.'
+      ],
+      ketbi: [
+        'Nêu cảm nghĩ của em về nhân vật và bài học bổ ích nhân vật mang lại cho trẻ thơ.'
+      ]
+    },
+    aiRules: {
+      mustHave: [
+        'Nêu rõ tên nhân vật và phim',
+        'Miêu tả hình ảnh sinh động phù hợp với phim hoạt hình',
+        'Nêu được tính cách hoặc thông điệp giáo dục từ nhân vật'
+      ],
+      shouldAvoid: [
+        'Liệt kê các tập phim mà không tập trung giới thiệu nhân vật',
+        'Miêu tả thiếu sinh động sinh động trẻ thơ'
+      ]
+    }
+  },
+  {
+    id: 'ta-nguoi',
+    title: 'Văn tả người',
+    emoji: '🧑',
+    iconName: 'user',
+    iconBg: 'from-orange-100 to-amber-100',
+    iconColor: 'text-orange-500',
+    description: 'Miêu tả ngoại hình, cử chỉ, giọng nói và tính cách ấm áp của một người thân, cô giáo, người bạn hay một người lao động em kính yêu.',
+    topics: [
+      'Tả người mẹ kính yêu luôn tảo tần chăm sóc gia đình em',
+      'Tả hình ảnh thầy giáo/cô giáo dạy lớp 5 của em đang say sưa giảng bài',
+      'Tả người bạn thân thiết nhất của em ở trường tiểu học',
+      'Tả bác nông dân đang chăm chỉ gặt lúa trên đồng quê hương',
+      'Tả một em bé chập chững biết đi, biết nói vô cùng đáng yêu'
+    ],
+    template: {
+      mobi: [
+        'Giới thiệu người định tả (Ai? Quan hệ với em thế nào? Ấn tượng bao quát nhất).'
+      ],
+      thanbi: [
+        '1. Tả ngoại hình nổi bật: Vóc dáng, khuôn mặt, mái tóc, đôi mắt, nụ cười, làn da, trang phục.',
+        '2. Tả hoạt động, tính cách: Giọng nói nói năng, cử chỉ điệu bộ, đôi bàn tay lao động, tính cách (Hiền hậu, chu đáo, vui tính, chăm chỉ).',
+        '3. Kỷ niệm đáng nhớ hoặc việc làm cụ thể của người đó thể hiện tình cảm với em.'
+      ],
+      ketbi: [
+        'Bộc lộ tình cảm yêu mến, kính trọng sâu sắc và mong ước, lời hứa đối với người được tả.'
+      ]
+    },
+    aiRules: {
+      mustHave: [
+        'Xác định rõ đối tượng tả người',
+        'Kết hợp hài hòa giữa tả ngoại hình và tả hoạt động, tính cách',
+        'Sử dụng từ ngữ miêu tả biểu cảm chân thực',
+        'Thể hiện tình cảm sâu sắc của em'
+      ],
+      shouldAvoid: [
+        'Liệt kê các bộ phận cơ thể một cách máy móc rập khuôn',
+        'Miêu tả quá cường điệu xa rời thực tế học sinh lớp 5'
+      ]
+    }
+  },
+  {
+    id: 'lap-chuong-trinh-hoat-dong',
+    title: 'Lập chương trình hoạt động',
+    emoji: '📅',
+    iconName: 'calendar',
+    iconBg: 'from-cyan-100 to-sky-100',
+    iconColor: 'text-cyan-600',
+    description: 'Lập kế hoạch chi tiết, phân công cụ thể các bước chuẩn bị cho một hoạt động tập thể như dọn vệ sinh, hội diễn văn nghệ hay cắm trại.',
+    topics: [
+      'Lập chương trình hoạt động cho buổi lao động dọn vệ sinh lớp học, sân trường',
+      'Lập chương trình hoạt động tổ chức buổi chúc mừng Ngày Nhà giáo Việt Nam 20-11',
+      'Lập chương trình cho buổi quyên góp sách vở ủng hộ học sinh vùng khó khăn',
+      'Lập kế hoạch tổ chức một buổi sinh hoạt lớp cuối tuần vui tươi, gắn kết'
+    ],
+    template: {
+      mobi: [
+        'Nêu mục đích của chương trình hoạt động (Hoạt động tập thể gì? Nhằm mục đích gì?)'
+      ],
+      thanbi: [
+        '1. Công tác chuẩn bị: Dụng cụ cần mang theo, địa điểm tập trung, thời gian.',
+        '2. Phân công nhiệm vụ cụ thể cho từng cá nhân hoặc nhóm (Ai quét dọn, ai lau bảng, ai nhổ cỏ; hoặc ban văn nghệ, ban khánh tiết...).',
+        '3. Chương trình cụ thể (Các bước tiến hành): Trình tự các hoạt động diễn ra từ đầu đến cuối một cách logic.'
+      ],
+      ketbi: [
+        'Nêu ý nghĩa của hoạt động tập thể (Gắn kết tình bạn, nâng cao ý thức trách nhiệm và niềm vui sau khi hoàn thành).'
+      ]
+    },
+    aiRules: {
+      mustHave: [
+        'Bố cục rõ ràng gồm 3 phần (Mục đích, Chuẩn bị & Phân công, Các bước tiến hành)',
+        'Phân công nhiệm vụ cụ thể, rõ ràng cho từng nhóm',
+        'Các hoạt động sắp xếp theo trình tự thời gian hợp lý',
+        'Từ ngữ ngắn gọn, rõ ý'
+      ],
+      shouldAvoid: [
+        'Viết như bài văn miêu tả thông thường',
+        'Lập kế hoạch quá sơ sài chung chung không thể thực hiện được thực tế'
+      ]
+    }
   }
 ];
 
@@ -287,6 +534,54 @@ export const VOCABULARY_BANK = {
       { name: 'Bày tỏ lập trường', words: ['hoàn toàn tán thành', 'gạt đi ý kiến bất cập', 'tin tưởng vững chắc', 'kiên quyết phản đối', 'đồng quan điểm với'] },
       { name: 'Từ nối lập luận', words: ['trước hết ta cần thấy', 'hơn thế nữa', 'đặc biệt đáng chú ý', 'ví dụ minh chứng rõ nhất', 'trái lại, trái chiều là'] },
       { name: 'Khẳng định đề xuất', words: ['chìa khóa vững bước', 'hướng tới lối sống đẹp', 'chúng ta hãy cùng nhau', 'đáng trân quý biết bao', 'trao thông điệp vàng'] }
+    ]
+  },
+  'cam-xuc-cau-chuyen': {
+    title: '📖 Từ vựng Cảm cảm về Câu chuyện',
+    categories: [
+      { name: 'Rung động sâu sắc', words: ['cảm động nghẹn ngào', 'xót xa thương cảm', 'lòng đầy khâm phục', 'thấu hiểu sâu sắc', 'ký ức ùa về'] },
+      { name: 'Đặc điểm câu chuyện', words: ['cốt truyện nhân văn', 'chi tiết đắt giá', 'bất ngờ cảm động', 'kết thúc viên mãn', 'giàu tính giáo dục'] },
+      { name: 'Bài học kết nối', words: ['hiếu thảo kính yêu', 'sống đẹp sẻ chia', 'lan tỏa tình thương', 'biết ơn trân trọng', 'nuôi dưỡng tâm hồn'] }
+    ]
+  },
+  'cam-xuc-bai-tho': {
+    title: '📜 Từ vựng Cảm xúc về Bài thơ',
+    categories: [
+      { name: 'Hình ảnh, ngôn từ', words: ['hình ảnh thơ mộng', 'ngôn từ trau chuốt', 'giản dị mộc mạc', 'giàu sức gợi hình', 'so sánh độc đáo'] },
+      { name: 'Nhạc điệu, vần thơ', words: ['vần điệu uyển chuyển', 'nhịp thơ dồn dập', 'êm đềm sâu lắng', 'âm vang giòn giã', 'nhạc điệu thiết tha'] },
+      { name: 'Cảm xúc khơi gợi', words: ['bâng khuâng xao xuyến', 'dâng trào cảm xúc', 'ấm áp tình quê', 'khắc khoải nhớ thương', 'thắp sáng niềm tin'] }
+    ]
+  },
+  'gioi-thieu-nhan-vat-sach': {
+    title: '📘 Từ vựng Giới thiệu nhân vật trong Sách',
+    categories: [
+      { name: 'Ngoại hình tính cách', words: ['kiêu hãnh tự tin', 'nhỏ nhắn tinh nghịch', 'dũng cảm quả cảm', 'hiền từ nhân hậu', 'học thức uyên bác'] },
+      { name: 'Hoàn cảnh & Hành động', words: ['phiêu lưu mạo hiểm', 'đối đầu thử thách', 'giúp bạn vượt khó', 'sửa sai nhận lỗi', 'đồng cam cộng khổ'] },
+      { name: 'Tình cảm độc giả', words: ['yêu mến khôn nguôi', 'khâm phục vô ngần', 'đồng cảm sâu sắc', 'nhân vật truyền cảm hứng', 'ấn tượng sâu đậm'] }
+    ]
+  },
+  'gioi-thieu-nhan-vat-hoat-hinh': {
+    title: '🦄 Từ vựng Giới thiệu nhân vật Hoạt hình',
+    categories: [
+      { name: 'Ngoại hình nét vẽ', words: ['ngộ nghĩnh đáng yêu', 'tròn xoe màu sắc', 'nét vẽ sinh động', 'đáng yêu ngây ngô', 'vẻ ngoài đặc trưng'] },
+      { name: 'Bảo bối phép thuật', words: ['phép thuật kỳ diệu', 'bảo bối thần kỳ', 'biến hóa khôn lường', 'sức mạnh phi thường', 'khám phá ước mơ'] },
+      { name: 'Tính cách hành động', words: ['tốt bụng ấm áp', 'vui vẻ lạc quan', 'vụng về tinh nghịch', 'kề vai sát cánh', 'tinh thần đồng đội'] }
+    ]
+  },
+  'ta-nguoi': {
+    title: '🧑 Từ vựng Văn Tả Người',
+    categories: [
+      { name: 'Ngoại hình khuôn mặt', words: ['mái tóc bạc phơ', 'đôi mắt biết nói', 'gương mặt phúc hậu', 'làn da rám nắng', 'nụ cười tỏa nắng'] },
+      { name: 'Cử chỉ hành động', words: ['bàn tay chai sần', 'giọng nói truyền cảm', 'tảo tần khuya sớm', 'chăm chỉ miệt mài', 'ân cần chu đáo'] },
+      { name: 'Tình cảm gắn kết', words: ['kính yêu vô bờ', 'biết ơn sâu sắc', 'trân quý thiêng liêng', 'kỷ niệm ấm áp', 'khắc ghi công ơn'] }
+    ]
+  },
+  'lap-chuong-trinh-hoat-dong': {
+    title: '📅 Từ vựng Lập chương trình Hoạt động',
+    categories: [
+      { name: 'Mục đích chuẩn bị', words: ['nâng cao ý thức', 'khang trang sạch đẹp', 'tri ân thầy cô', 'chuẩn bị chu đáo', 'phân công cụ thể'] },
+      { name: 'Hoạt động phân công', words: ['ban khánh tiết', 'nhóm lao động', 'hăng hái thực hiện', 'phối hợp nhịp nhàng', 'phân công trách nhiệm'] },
+      { name: 'Kết quả ý nghĩa', words: ['hoàn thành xuất sắc', 'gắn kết tinh thần', 'vui tươi lành mạnh', 'trải nghiệm bổ ích', 'đoàn kết một lòng'] }
     ]
   }
 };

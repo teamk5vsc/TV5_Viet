@@ -167,12 +167,187 @@ function getClientMockEssay(topic: string, type: string, format: 'essay' | 'para
           "Câu văn diễn đạt trong sáng, liên kết logic chặt chẽ giữa sách và bài học đạo đức sống tử tế."
         ]
       }
+    },
+    'cam-xuc-cau-chuyen': {
+      essay: {
+        format: 'essay',
+        content: `Mỗi câu chuyện cổ tích đều thắp sáng những ước mơ trẻ thơ, nhưng câu chuyện "Bông hoa cúc trắng" là tác phẩm để lại trong em những rung động sâu sắc nhất về tình mẫu tử thiêng liêng. Hình ảnh cô bé hiếu thảo lặn lội tìm hoa cứu mẹ đã in đậm trong tâm trí em như một biểu tượng đẹp đẽ của lòng biết ơn.\n\nCâu chuyện kể về một cô bé nghèo sống cùng người mẹ ốm nặng. Thương mẹ, em đã vượt qua bao khó khăn để tìm gặp cụ già thầy thuốc và được chỉ lối tìm bông hoa cúc trắng làm thuốc. Khi biết mỗi cánh hoa tương ứng với một năm mẹ được sống thêm, cô bé đã không ngần ngại xé nhỏ từng cánh hoa thành muôn vàn sợi nhỏ. Hành động xé nhỏ cánh hoa ấy tuy giản dị nhưng chứa đựng một tấm lòng hiếu thảo vô hạn, một sự dũng cảm chiến thắng số phận. Nhờ tình thương yêu mãnh liệt của người con, người mẹ đã vượt qua bạo bệnh và sống hạnh phúc bên con.\n\nĐọc câu chuyện, em vô cùng xúc động trước tình thương vô điều kiện của cô bé dành cho mẹ. Tác phẩm đã dạy em bài học thấm thía về đạo làm con, nhắc nhở em phải luôn yêu quý, chăm sóc cha mẹ khi còn có thể.`,
+        highlights: [
+          { text: "thắp sáng những ước mơ trẻ thơ", type: "rhetorical", explanation: "Ẩn dụ ví câu chuyện như ngọn đèn thắp sáng ước mơ tâm hồn tuổi thơ." },
+          { text: "xé nhỏ từng cánh hoa thành muôn vàn sợi nhỏ", type: "imagery", explanation: "Chi tiết miêu tả hành động xúc động bộc lộ trí thông minh và lòng hiếu thảo của cô bé." },
+          { text: "em vô cùng xúc động trước tình thương", type: "emotion", explanation: "Bộc lộ trực tiếp cảm xúc nghẹn ngào, thương cảm chân thành của người đọc." },
+          { text: "tảo tần", type: "vocabulary", explanation: "Từ ngữ gợi tả nét tính cách lo toan, hy sinh thầm lặng của người con hiếu thảo." }
+        ],
+        analysis: [
+          "Bày tỏ cảm xúc chân thành, sâu lắng đi kèm tóm tắt chi tiết đắt giá nhất của truyện.",
+          "Lối viết truyền cảm hứng, khơi gợi lòng hiếu kính đối với đấng sinh thành.",
+          "Cấu trúc cân đối giữa cảm nhận nhân vật và liên hệ bài học đạo đức tự thân."
+        ]
+      },
+      paragraph: {
+        format: 'paragraph',
+        content: `Hành động cô bé xé nhỏ từng cánh hoa cúc trắng thành muôn vàn sợi nhỏ chính là biểu tượng đẹp đẽ nhất cho tình thương yêu vô bờ bến. Mỗi cánh hoa được xé ra như nối dài thêm sợi dây sự sống của người mẹ yêu kính. Chi tiết cảm động ấy len lỏi vào tâm hồn em, đánh thức lòng biết ơn sâu sắc và nhắc nhở em biết trân trọng mỗi phút giây được ở bên cạnh cha mẹ.`,
+        highlights: [
+          { text: "như nối dài thêm sợi dây sự sống", type: "rhetorical", explanation: "So sánh ẩn dụ biến cánh hoa thành nhịp cầu kết nối sự sống cho người mẹ." },
+          { text: "len lỏi vào tâm hồn em", type: "emotion", explanation: "Mô tả cụ thể sự tác động nhẹ nhàng nhưng sâu sắc của bài học đạo đức vào tâm trí." }
+        ],
+        analysis: [
+          "Đoạn văn tập trung phân tích một chi tiết đắt giá nhất của câu chuyện để bộc lộ cảm xúc sâu sắc.",
+          "Từ ngữ chọn lọc tinh tế, câu văn biểu cảm cao."
+        ]
+      }
+    },
+    'cam-xuc-bai-tho': {
+      essay: {
+        format: 'essay',
+        content: `Quê hương Việt Nam luôn ngọt ngào qua những lời ru, và bài thơ "Hạt gạo làng ta" của nhà thơ Trần Đăng Khoa là tác phẩm khơi gợi trong em những xúc cảm ấm áp nhất về tình yêu quê hương đất nước. Từng vần thơ giản dị, mộc mạc đã vẽ nên bức tranh lao động tảo tần đầy nghĩa tình.\n\nBài thơ mở ra bằng hương vị thân thương của quê hương: "Hạt gạo làng ta / Có vị phù sa / Có hương sen thơm...". Những dòng thơ ngắn gọn nhưng chứa đựng nhạc điệu thiết tha như tiếng hát ru êm đềm của mẹ. Xúc động nhất là hình ảnh người mẹ cha lao động vất vả giữa trưa hè nắng gắt: "Giọt mồ hôi sa / Những trưa tháng sáu / Nước như ai nấu / Chết cả cá cờ". Biện pháp so sánh ví nước nóng như nấu và hình ảnh cá chết cờ lột tả sự khắc nghiệt của thời tiết, tôn vinh đức hy sinh thầm lặng để làm ra hạt ngọc đất trời. Em cảm nhận được tấm lòng kính yêu và lòng biết ơn vô hạn đối với người nông dân lao động.\n\nTác phẩm đã chắp cánh cho tình yêu quê hương trong em thêm lớn lao. Đọc bài thơ, em tự hứa sẽ trân trọng từng hạt cơm ăn mỗi ngày, trân quý sức lao động và nỗ lực học tập tốt để sau này xây dựng quê hương thêm giàu đẹp.`,
+        highlights: [
+          { text: "nhạc điệu thiết tha như tiếng hát ru", type: "rhetorical", explanation: "So sánh nhạc điệu thơ với khúc hát ru làm tăng tính biểu cảm, ngọt ngào của quê hương." },
+          { text: "Giọt mồ hôi sa / Những trưa tháng sáu", type: "imagery", explanation: "Chi tiết thơ khắc họa sâu sắc nỗi vất vả, khó nhọc của người nông dân dưới nắng gắt." },
+          { text: "vô cùng biết ơn và trân quý", type: "emotion", explanation: "Cảm xúc biết ơn trân trọng hạt gạo và công lao người lao động làm ra nó." },
+          { text: "hạt ngọc", type: "vocabulary", explanation: "Từ ngữ ẩn dụ tôn vinh giá trị quý báu của hạt gạo quê hương Việt Nam." }
+        ],
+        analysis: [
+          "Cảm thụ văn học xuất sắc, trích dẫn thơ hợp lý để làm điểm tựa bộc lộ tình cảm.",
+          "Ngôn ngữ giàu nhạc điệu, sử dụng các hình ảnh đối chiếu sinh động.",
+          "Liên hệ bài học thực hành tiết kiệm, trân trọng sức lao động rất thiết thực."
+        ]
+      },
+      paragraph: {
+        format: 'paragraph',
+        content: `Hình ảnh "Giọt mồ hôi sa / Những trưa tháng sáu" trong bài thơ khiến lòng em trào dâng một niềm thương cảm và biết ơn vô hạn. Giữa cái nắng như thiêu như đốt làm cá cờ cũng phải chết, người mẹ vẫn lặn lội trên đồng ruộng để làm nên những hạt gạo dẻo thơm. Vần thơ ấy như một lời nhắc nhở sâu sắc giúp em biết quý trọng từng hạt cơm mình ăn hằng ngày và thấu hiểu nỗi vất vả của cha mẹ.`,
+        highlights: [
+          { text: "lòng em trào dâng một niềm thương cảm", type: "emotion", explanation: "Thể hiện sự thấu cảm trực tiếp trước nỗi vất vả của người lao động." },
+          { text: "như một lời nhắc nhở sâu sắc", type: "rhetorical", explanation: "Nhận định ý nghĩa giáo dục của câu thơ đối với lối sống của bản thân học sinh." }
+        ],
+        analysis: [
+          "Đoạn văn tập trung bày tỏ cảm nghĩ về hình ảnh thơ lao động gian khổ của cha mẹ.",
+          "Liên kết câu chặt chẽ, dẫn chứng thơ đan xen cảm xúc tự nhiên."
+        ]
+      }
+    },
+    'gioi-thieu-nhan-vat-sach': {
+      essay: {
+        format: 'essay',
+        content: `Trong thế giới sách rộng lớn em đã từng đọc, nhân vật chú Dế Mèn trong tác phẩm "Dế Mèn phiêu lưu ký" của nhà văn Tô Hoài là nhân vật để lại ấn tượng sâu đậm nhất trong lòng em. Hành trình từ một chàng dế kiêu căng đến người anh hùng nghĩa hiệp đã truyền cảm hứng mạnh mẽ về lòng dũng cảm.\n\nDế Mèn hiện lên ở đầu tác phẩm với vẻ ngoài vô cùng oai vệ: đôi càng mẫm bóng, sợi râu dài uốn cong đầy kiêu hãnh. Tuy nhiên, tính cách chú lúc ấy lại kiêu căng, ngạo mạn, coi thường mọi người xung quanh, dẫn đến cái chết thương tâm của người bạn Dế Choắt đáng thương. Khoảnh khắc Dế Mèn đứng lặng buồn trước mộ Dế Choắt và nhận ra bài học đường đời đầu tiên là bước ngoặt lay động lòng người nhất. Từ đó, chú quyết tâm lên đường phiêu lưu, kết bạn cùng dế Trũi và xả thân bảo vệ kẻ yếu chống lại chị Nhà Trò độc ác. Sự thay đổi tính cách ấy bộc lộ phẩm chất dũng cảm và tinh thần sửa sai đáng quý.\n\nNhân vật Dế Mèn đã dạy em bài học quý giá về cách cư xử khiêm tốn và biết nhận lỗi để tiến bộ. Em vô cùng quý mến chú dế nghĩa hiệp này và tự hứa sẽ luôn bao dung, sẵn sàng giúp đỡ bạn bè xung quanh mình.`,
+        highlights: [
+          { text: "đôi càng mẫm bóng, sợi râu dài uốn cong", type: "imagery", explanation: "Miêu tả ngoại hình dế Mèn sinh động, oai phong nhưng chứa vẻ kiêu hãnh." },
+          { text: "đứng lặng buồn trước mộ Dế Choắt", type: "imagery", explanation: "Chi tiết đắt giá thể hiện sự hối lỗi, thức tỉnh nhân cách tốt đẹp trong nhân vật." },
+          { text: "vô cùng quý mến chú dế nghĩa hiệp", type: "emotion", explanation: "Bộc lộ trực tiếp tình cảm mến yêu dành cho hành trình trưởng thành của nhân vật." },
+          { text: "kiêu hãnh", type: "vocabulary", explanation: "Từ láy miêu tả nét tính cách kiêu căng lúc trẻ của nhân vật cần sửa đổi." }
+        ],
+        analysis: [
+          "Giới thiệu nhân vật xuất sắc gắn liền tên sách, lột tả được hành trình biến đổi tâm lý nhân vật.",
+          "Dẫn chứng tiêu biểu chọn lọc (ngoại hình kiêu hãnh, sự việc hối hận trước mộ Dế Choắt, hành động giúp Nhà Trò).",
+          "Liên hệ bài học khiêm tốn ứng xử thực tế thiết thực cho lứa tuổi học trò."
+        ]
+      },
+      paragraph: {
+        format: 'paragraph',
+        content: `Sự thức tỉnh của Dế Mèn trước mộ người bạn Dế Choắt chính là chi tiết lay động trái tim em nhất. Nhìn giọt nước mắt hối hận của chú dế kiêu hãnh đứng lặng lẽ dưới ngọn cỏ tranh, em bỗng nhận ra giá trị to lớn của sự khiêm tốn và biết lỗi. Bài học ấy khuyên nhủ em không được kiêu căng, ngạo mạn làm tổn thương người khác mà phải sống yêu thương, chia sẻ cùng mọi người.`,
+        highlights: [
+          { text: "giọt nước mắt hối hận của chú dế kiêu hãnh", type: "imagery", explanation: "Hình ảnh chuyển tải cảm xúc sâu sắc bộc lộ lòng nhân hậu thức tỉnh của nhân vật." },
+          { text: "nhận ra giá trị to lớn của sự khiêm tốn", type: "emotion", explanation: "Nhận thức suy nghĩ sau khi chứng kiến biến cố lỗi lầm của nhân vật." }
+        ],
+        analysis: [
+          "Đoạn văn tập trung giới thiệu và cảm nhận về bài học đắt giá nhất của nhân vật trong tác phẩm.",
+          "Ngôn từ chọn lọc sâu sắc, lập luận chặt chẽ."
+        ]
+      }
+    },
+    'gioi-thieu-nhan-vat-hoat-hinh': {
+      essay: {
+        format: 'essay',
+        content: `Mỗi buổi tối cuối tuần, em lại háo hức đón chờ những tập phim hoạt hình vui nhộn, và nhân vật chú mèo máy Doraemon trong bộ phim cùng tên là người bạn hoạt hình em yêu mến nhất. Vẻ ngoài ngộ nghĩnh và tấm lòng nhân hậu của chú đã mang lại cho em biết bao niềm vui tuổi thơ.\n\nDoraemon hiện lên thật đáng yêu với thân hình tròn xoe màu xanh lam, cái đầu trọc lóc không có tai và nụ cười rạng rỡ thân thiện. Điểm đặc biệt nhất của chú là chiếc túi thần kỳ chứa đựng muôn vàn bảo bối kỳ diệu như chong chóng tre, cánh cửa thần kỳ... Mỗi món bảo bối mở ra một thế giới tưởng tượng phong phú, kích thích óc sáng tạo của em. Hơn cả những phép thuật kỳ lạ, tình bạn gắn kết sâu đậm giữa Doraemon và Nobita mới là điều khiến em cảm kích nhất. Dù Nobita hậu đậu hay gặp rắc rối, Doraemon luôn bên cạnh chia sẻ, khuyên nhủ và bảo vệ bạn bằng một trái tim nhân hậu vô điều kiện.\n\nNhân vật Doraemon đã chắp cánh cho những ước mơ tuổi thơ em bay cao. Em vô cùng yêu quý chú mèo máy tốt bụng này và thầm hứa sẽ luôn đối xử tốt bụng, chân thành đối với bạn bè xung quanh giống như tấm lòng của Doraemon.`,
+        highlights: [
+          { text: "thân hình tròn xoe màu xanh lam đáng yêu", type: "imagery", explanation: "Miêu tả hình ảnh nhân vật hoạt hình quen thuộc, đầy màu sắc sinh động." },
+          { text: "túi thần kỳ chứa đựng muôn vàn bảo bối", type: "imagery", explanation: "Đặc điểm bảo bối đặc trưng làm nên sự lôi cuốn của nhân vật hoạt hình Doraemon." },
+          { text: "vô cùng yêu quý chú mèo máy tốt bụng", type: "emotion", explanation: "Tình cảm thương mến chân thành của bạn nhỏ dành cho nhân vật." },
+          { text: "ngộ nghĩnh", type: "vocabulary", explanation: "Từ láy gợi tả nét vẽ ngộ nghĩnh, hài hước đáng yêu của nhân vật hoạt hình." }
+        ],
+        analysis: [
+          "Giới thiệu sinh động phù hợp tính chất phim hoạt hình trẻ thơ, từ ngữ đầy màu sắc.",
+          "Phân tích nét ngộ nghĩnh bên ngoài dẫn dắt khéo léo đến vẻ đẹp tình bạn bên trong.",
+          "Rút ra thông điệp giáo dục nhẹ nhàng sâu sắc về tình bạn chân thành."
+        ]
+      },
+      paragraph: {
+        format: 'paragraph',
+        content: `Tấm lòng nhân hậu, bao dung của chú mèo máy Doraemon dành cho Nobita hậu đậu chính là bài học ý nghĩa nhất về tình bạn. Dù Nobita có làm hỏng việc hay gây rắc rối thế nào, Doraemon vẫn luôn sát cánh kề vai vỗ về và giúp bạn sửa lỗi bằng chiếc túi bảo bối thần kỳ. Sự gắn kết bền chặt và bao dung ấy đã dạy em biết sống chân thành, biết lắng nghe chia sẻ để gìn giữ những tình bạn đẹp dưới mái trường mến yêu.`,
+        highlights: [
+          { text: "luôn sát cánh kề vai vỗ về", type: "rhetorical", explanation: "Nhân hóa cử chỉ chăm sóc, vỗ về bảo vệ bạn của nhân vật." },
+          { text: "dạy em biết sống chân thành, biết lắng nghe", type: "emotion", explanation: "Bài học tình bạn sâu sắc mà nhân vật hoạt hình truyền tải cho học sinh tiểu học." }
+        ],
+        analysis: [
+          "Đoạn văn giới thiệu nét tính cách đáng quý nhất của nhân vật hoạt hình: sự trung thành và bao dung.",
+          "Diễn đạt trôi chảy, giàu cảm xúc trong sáng."
+        ]
+      }
+    },
+    'ta-nguoi': {
+      essay: {
+        format: 'essay',
+        content: `Trong cuộc đời mỗi người, gia đình là bến đỗ bình yên nhất, và người mẹ kính yêu chính là ngọn lửa ấm áp sưởi ấm tâm hồn em mỗi ngày. Hình ảnh mẹ tảo tần sớm hôm chăm lo cho gia đình luôn là bức tranh đẹp nhất khắc ghi sâu đậm trong trái tim em.\n\nMẹ em năm nay đã ngoài bốn mươi tuổi. Dáng người mẹ nhỏ nhắn, hơi gầy vì bao năm tháng lo toan vất vả gánh vác việc nhà. Mái tóc mẹ dài, điểm xuyết vài sợi bạc lòa xòa trên trán mỗi khi mẹ cười hiền hậu. Đôi mắt mẹ ấm áp, biết nói, luôn nhìn em với tình yêu thương bao la vô điều kiện. Đẹp nhất là đôi bàn tay mẹ - đôi tay thô ráp, chai sần vì nắng mưa sương gió nhưng lại vô cùng khéo léo khâu vá manh áo, nấu những bữa cơm dẻo thơm ngọt lành nuôi nấng em khôn lớn. Mỗi sớm mai, giọng nói dịu dàng của mẹ cất lên đánh thức em đi học như tiếng ru ngọt ngào xua tan mọi mỏi mệt.\n\nTình yêu thương bao la và đức hy sinh thầm lặng của mẹ như dòng nước mát tưới tắm tâm hồn em. Nhìn đôi tay gầy hao của mẹ, lòng em ngập tràn lòng biết ơn vô hạn. Em tự hứa sẽ học tập thật chăm ngoan, vâng lời cha mẹ để mang lại nụ cười rạng rỡ rực rỡ nhất trên đôi môi ấm áp của mẹ kính yêu.`,
+        highlights: [
+          { text: "ngọn lửa ấm áp sưởi ấm tâm hồn em", type: "rhetorical", explanation: "Phép ẩn dụ ví mẹ như ngọn lửa ấm áp làm nổi bật tình thương gia đình thiêng liêng." },
+          { text: "đôi tay thô ráp, chai sần vì nắng mưa sương gió", type: "imagery", explanation: "Hình ảnh miêu tả đôi bàn tay lam lũ lột tả đức hy sinh cao cả của người mẹ." },
+          { text: "lòng em ngập tràn lòng biết ơn vô hạn", type: "emotion", explanation: "Bộc lộ tình cảm hiếu kính sâu sắc của người con dành cho cha mẹ." },
+          { text: "tảo tần", type: "vocabulary", explanation: "Từ láy đặc sắc Tiếng Việt lớp 5 gợi sự lo toan chăm chỉ, chịu thương chịu khó của mẹ." }
+        ],
+        analysis: [
+          "Bố cục văn tả người chuẩn mực 3 phần, kết hợp nhuần nhuyễn tả ngoại hình nổi bật và tả hoạt động tính cách.",
+          "Sử dụng nhiều từ láy và tính từ biểu cảm cao gợi liên tưởng sâu sắc.",
+          "Cảm xúc chân thành lay động lòng người bộc lộ tự nhiên qua từng chi tiết."
+        ]
+      },
+      paragraph: {
+        format: 'paragraph',
+        content: `Đôi bàn tay thô ráp, chai sần đầy những vết hằn thời gian của mẹ chính là hình ảnh khiến lòng em rưng rưng xúc động nhất. Đôi bàn tay ấy đã thức khuya dậy sớm khâu từng chiếc cúc áo bị đứt, nấu từng bát cháo nóng hổi vỗ về mỗi khi em bị ốm đau. Sự ấm áp, khéo léo từ đôi bàn tay lam lũ của mẹ truyền cho em một sức mạnh diệu kỳ, sưởi ấm lòng em và nhắc nhở em phải luôn nỗ lực học tập để đền đáp công ơn biển trời đó.`,
+        highlights: [
+          { text: "đôi bàn tay lam lũ của mẹ truyền cho em một sức mạnh", type: "imagery", explanation: "Miêu tả cụ thể qua xúc giác để chuyển hóa hành động của mẹ thành nguồn động lực tinh thần." },
+          { text: "khiến lòng em rưng rưng xúc động", type: "emotion", explanation: "Bộc lộ trực tiếp cảm xúc yêu thương, xót xa khi ngắm nhìn tay mẹ." }
+        ],
+        analysis: [
+          "Đoạn văn tả chi tiết đôi bàn tay mẹ tiêu biểu để bộc lộ tính cách chu đáo và tình thương bao la.",
+          "Cách sắp xếp câu văn uyển chuyển nhịp nhàng."
+        ]
+      }
+    },
+    'lap-chuong-trinh-hoat-dong': {
+      essay: {
+        format: 'essay',
+        content: `Để chuẩn bị đón chào năm học mới thật sạch sẽ khang trang, chi đội lớp 5A chúng em đã cùng nhau thống nhất lập kế hoạch cho buổi lao động dọn vệ sinh lớp học. Bản chương trình hoạt động khoa học khoa học dưới đây đã giúp cả lớp phối hợp ăn ý để dọn dẹp lớp học thơm tho ngăn nắp chỉ trong một buổi sáng.\n\nMục đích của buổi dọn vệ sinh là làm sạch lớp học, bảo vệ sức khỏe và rèn luyện ý thức giữ gìn vệ sinh chung cho học sinh. Về công tác chuẩn bị, cả lớp tập trung lúc 7 giờ 30 phút sáng chủ nhật tại phòng học. Tổ 1 mang chổi quét nhà và xô nước, Tổ 2 mang khăn lau và nước lau kính, Tổ 3 mang chổi quét trần và nước lau sàn. Phân công nhiệm vụ chi tiết: Tổ 1 chịu trách nhiệm quét mạng nhện trần nhà và lau bảng đen; Tổ 2 tiến hành lau dọn toàn bộ hệ thống cửa sổ, kính hành lang; Tổ 3 quét rác sàn nhà và lau chùi bàn ghế gỗ. Mọi người cùng hăng hái thực hiện nhịp nhàng theo sự hướng dẫn của lớp trưởng.\n\nKết quả, chỉ sau hơn hai tiếng lao động hăng say, phòng học lớp 5A đã sạch sẽ tinh tươm, cửa kính sáng bóng lấp lánh nắng thu. Buổi lao động lập kế hoạch dọn dẹp chu đáo ấy không chỉ mang lại không gian học tập tuyệt đẹp mà còn chắp cánh cho tình đoàn kết bạn bè thêm thắt chặt ấm áp.`,
+        highlights: [
+          { text: "dọn dẹp lớp học thơm tho ngăn nắp", type: "vocabulary", explanation: "Từ láy 'ngăn nắp' gợi tả trạng thái sạch sẽ, gọn gàng khoa học của lớp học sau khi lao động." },
+          { text: "Tổ 1 chịu trách nhiệm quét mạng nhện... Tổ 2 lau dọn... Tổ 3 quét rác", type: "imagery", explanation: "Chi tiết lập kế hoạch phân công nhiệm vụ cụ thể rõ ràng cho từng nhóm." },
+          { text: "cả lớp phối hợp ăn ý... chắp cánh tình đoàn kết", type: "emotion", explanation: "Thể hiện niềm vui gắn kết đoàn kết bạn bè thông qua hoạt động tập thể." },
+          { text: "sạch sẽ tinh tươm", type: "vocabulary", explanation: "Từ láy 'tinh tươm' miêu tả mức độ sạch sẽ tuyệt đối của phòng học mới." }
+        ],
+        analysis: [
+          "Bố cục rõ ràng gồm Mục đích, Chuẩn bị & Phân công và Tiến trình thực hiện kết quả rõ rệt.",
+          "Văn phong lập kế hoạch ngắn gọn, súc tích khoa học nhưng vẫn giàu cảm xúc tập thể ấm áp.",
+          "Tính khả thi cao, có thể áp dụng trực tiếp cho hoạt động thực tế lớp học lớp 5."
+        ]
+      },
+      paragraph: {
+        format: 'paragraph',
+        content: `Việc lập chương trình hoạt động phân công cụ thể cho buổi dọn vệ sinh lớp học là vô cùng cần thiết để buổi lao động đạt hiệu quả cao. Nhờ phân chia rõ ràng Tổ 1 quét trần nhà, Tổ 2 lau cửa kính sáng bóng, và Tổ 3 lau chùi bàn ghế học sinh, cả lớp đã bắt tay làm việc một cách nhịp nhàng khoa học. Sự phối hợp ăn ý ấy giúp tiết kiệm thời gian lao động và nhân lên niềm vui gắn kết tập thể của chúng em dưới mái trường mến yêu.`,
+        highlights: [
+          { text: "cả lớp đã bắt tay làm việc một cách nhịp nhàng", type: "rhetorical", explanation: "Nhân hóa không khí làm việc hăng say chung sức đồng lòng của tập thể." },
+          { text: "Tổ 1 quét trần nhà, Tổ 2 lau cửa kính... Tổ 3 lau chùi bàn ghế", type: "imagery", explanation: "Nêu các đầu việc phân công rõ ràng chi tiết mang tính lập kế hoạch cao." }
+        ],
+        analysis: [
+          "Đoạn văn tập trung chứng minh lợi ích và sự cần thiết của việc lập kế hoạch phân công cụ thể.",
+          "Câu từ mạch lạc, diễn đạt rõ ràng."
+        ]
+      }
     }
   };
 
   const genreEntry = mockDatabase[type] || mockDatabase['ta-canh'];
   return genreEntry[format] || genreEntry['essay'];
 }
+
 
 function getClientMockOutline(topic: string, type: string) {
   const cleanTopic = topic || 'Tả cảnh giờ ra chơi';
@@ -329,6 +504,187 @@ function getClientMockOutline(topic: string, type: string) {
       errorsToAvoid: [
         'Tránh quan điểm mơ hồ, vừa đồng tình vừa phản đối không dứt khoát.',
         'Tránh lý lẽ suông, thiếu dẫn chứng thực tế từ học tập và đời sống.'
+      ]
+    },
+    'cam-xuc-cau-chuyen': {
+      genre: 'Bày tỏ cảm xúc về một câu chuyện',
+      requirements: [
+        `Bày tỏ tình cảm chân thành về câu chuyện: ${cleanTopic}`,
+        'Lựa chọn dẫn chứng sự việc cảm động, ý nghĩa trong truyện',
+        'Lý giải cảm xúc (yêu, ghét, thương cảm, tự hào) rõ nét',
+        'Rút ra bài học nhân sinh sâu sắc cho bản thân'
+      ],
+      outline: {
+        mobi: [
+          `Giới thiệu câu chuyện định bày tỏ cảm xúc: ${cleanTopic}`,
+          'Khái quát ấn tượng ban đầu và cảm xúc sâu đậm nhất của em.'
+        ],
+        thanbi: [
+          'Tóm tắt ngắn gọn biến cố hay sự việc khơi nguồn cảm xúc chính.',
+          'Bày tỏ cảm xúc với từng nhân vật nổi bật (Cảm phục lòng hiếu thảo, xót thương số phận lam lũ).',
+          'Đánh giá ý nghĩa nhân văn hay thông điệp câu chuyện mang lại.',
+          'Liên hệ thực tế bản thân: suy nghĩ và hành động sau khi đọc truyện.'
+        ],
+        ketbi: [
+          'Khẳng định giá trị câu chuyện và tình cảm bền chặt dành cho tác phẩm.',
+          'Lời khuyên hoặc thông điệp ý nghĩa gửi tới bạn bè cùng đọc.'
+        ]
+      },
+      keywords: ['cảm động', 'xót thương', 'hiếu thảo', 'nhân văn', 'bài học', 'ý nghĩa', 'khắc sâu'],
+      errorsToAvoid: [
+        'Tránh kể lại toàn bộ câu chuyện từ đầu đến cuối mà quên biểu lộ cảm nghĩ.',
+        'Tránh viết cảm xúc sáo rỗng, rập khuôn thiếu sự chân thành.'
+      ]
+    },
+    'cam-xuc-bai-tho': {
+      genre: 'Bày tỏ cảm xúc về một bài thơ',
+      requirements: [
+        `Bày tỏ cảm xúc về bài thơ: ${cleanTopic}`,
+        'Cảm nhận cái hay của hình ảnh thơ nghệ thuật độc đáo',
+        'Cảm nhận nhạc điệu, vần thơ réo rắt gợi cảm xúc',
+        'Thể hiện sự đồng cảm sâu sắc với tình cảm của tác giả'
+      ],
+      outline: {
+        mobi: [
+          `Giới thiệu bài thơ và tác giả định bày tỏ cảm nghĩ: ${cleanTopic}`,
+          'Nêu ấn tượng bao quát và nhạc điệu thơ đọng lại trong lòng em.'
+        ],
+        thanbi: [
+          'Cảm xúc gợi lên từ những hình ảnh thơ đẹp và độc đáo nhất.',
+          'Cảm nhận vần điệu, nhịp điệu bài thơ (êm đềm, giòn giã hay tha thiết).',
+          'Phân tích những từ ngữ đắt giá bộc lộ tình thương, tình quê hương đất nước.',
+          'Sự đồng điệu giữa tâm hồn em và tác giả gửi gắm qua trang thơ.'
+        ],
+        ketbi: [
+          'Khẳng định lại tình yêu của em dành cho bài thơ và sức sống của tác phẩm.',
+          'Ý nghĩa của bài thơ đối với đời sống tinh thần của tuổi thơ em.'
+        ]
+      },
+      keywords: ['vần thơ', 'nhạc điệu', 'hình ảnh', 'tha thiết', 'đồng cảm', 'trân quý', 'ngọt ngào'],
+      errorsToAvoid: [
+        'Tránh việc chép lại nguyên văn bài thơ mà thiếu phân tích cảm xúc.',
+        'Tránh viết lan man, không chỉ rõ được cái hay của từ ngữ nghệ thuật.'
+      ]
+    },
+    'gioi-thieu-nhan-vat-sach': {
+      genre: 'Giới thiệu nhân vật trong sách',
+      requirements: [
+        `Giới thiệu nhân vật văn học: ${cleanTopic}`,
+        'Khái quát tính cách cốt lõi và nét ngoại hình đặc trưng phản ánh con người',
+        'Nêu dẫn chứng hành động, lời nói cụ thể của nhân vật trong tác phẩm',
+        'Bộc lộ suy nghĩ, bài học ứng xử noi gương nhân vật'
+      ],
+      outline: {
+        mobi: [
+          `Giới thiệu nhân vật và tên cuốn sách chứa nhân vật đó: ${cleanTopic}`,
+          'Nêu lý do nhân vật gây ấn tượng mạnh mẽ nhất với em.'
+        ],
+        thanbi: [
+          'Giới thiệu lai lịch, hoàn cảnh xuất hiện của nhân vật trong trang sách.',
+          'Tả nét ngoại hình tiêu biểu (nếu có) phản ánh nội tâm nhân vật.',
+          'Khắc họa phẩm chất tính cách (dũng cảm, tốt bụng, kiên trì) qua hành động cụ thể.',
+          'Chi tiết/sự việc lay động nhất về nhân vật làm em nhớ mãi.'
+        ],
+        ketbi: [
+          'Khẳng định giá trị nhân vật truyền cảm hứng tích cực cho bản thân em.',
+          'Lời tự hứa học tập và noi theo gương tốt của nhân vật.'
+        ]
+      },
+      keywords: ['quả cảm', 'tảo tần', 'kiên trì', 'hành động', 'truyền cảm hứng', 'ấn tượng', 'noi theo'],
+      errorsToAvoid: [
+        'Tránh sa đà kể tóm tắt lại toàn bộ cốt truyện sách.',
+        'Tránh miêu tả nhân vật chung chung, không gắn liền chi tiết cụ thể trong sách.'
+      ]
+    },
+    'gioi-thieu-nhan-vat-hoat-hinh': {
+      genre: 'Giới thiệu nhân vật hoạt hình',
+      requirements: [
+        `Giới thiệu nhân vật hoạt hình yêu thích: ${cleanTopic}`,
+        'Miêu tả hình ảnh, màu sắc, nét vẽ sinh động tinh nghịch',
+        'Giới thiệu bảo bối, năng lực đặc biệt hoặc phép thuật độc đáo',
+        'Nêu tính cách nhân vật và thông điệp giáo dục ý nghĩa'
+      ],
+      outline: {
+        mobi: [
+          `Giới thiệu nhân vật hoạt hình và bộ phim hoạt hình đó: ${cleanTopic}`,
+          'Nêu cảm nhận yêu thích bao quát của em dành cho nhân vật.'
+        ],
+        thanbi: [
+          'Miêu tả ngoại hình ngộ nghĩnh đặc trưng (hình dáng, trang phục, sắc thái cười vui).',
+          'Giới thiệu năng lực đặc biệt, món bảo bối kỳ diệu gắn liền với nhân vật.',
+          'Phân tích phẩm chất (Vui tính, trung thành, quả cảm, thông minh vượt khó).',
+          'Sự việc/tập phim hài hước hoặc cảm động nhất của nhân vật khiến em thích thú.'
+        ],
+        ketbi: [
+          'Khẳng định sự yêu mến của em và bài học ý nghĩa nhân vật mang lại.',
+          'Mong ước hoặc thông điệp đáng yêu gửi tới bạn bè.'
+        ]
+      },
+      keywords: ['ngộ nghĩnh', 'kỳ diệu', 'bảo bối', 'vui nhộn', 'trung thành', 'thông điệp', 'tuổi thơ'],
+      errorsToAvoid: [
+        'Tránh chỉ liệt kê các tập phim mà quên giới thiệu tính cách nhân vật.',
+        'Tránh miêu tả khô khan, thiếu đi chất trẻ thơ sinh động của hoạt hình.'
+      ]
+    },
+    'ta-nguoi': {
+      genre: 'Văn tả người',
+      requirements: [
+        `Miêu tả người gần gũi kính yêu: ${cleanTopic}`,
+        'Kết hợp hài hòa tả ngoại hình nổi bật phản ánh độ tuổi, công việc',
+        'Tả hoạt động, cử chỉ, giọng nói bộc lộ tính cách cốt lõi',
+        'Thể hiện tình cảm biết ơn, kính yêu thiết tha gắn bó'
+      ],
+      outline: {
+        mobi: [
+          `Giới thiệu người em định miêu tả: ${cleanTopic} (Là ai? Mối quan hệ thế nào?)`,
+          'Nêu ấn tượng sâu sắc nhất về người đó đối với em.'
+        ],
+        thanbi: [
+          'Tả bao quát dáng người, độ tuổi, trang phục thường ngày mộc mạc.',
+          'Tả chi tiết khuôn mặt, mái tóc, làn da và đôi mắt ấm áp hiền hậu.',
+          'Tả cử chỉ hoạt động: giọng nói nói năng, đôi bàn tay gầy guộc chăm lo gia đình.',
+          'Khắc họa tính cách nổi bật (Hiền từ, chu đáo, vui tính, chăm chỉ) qua thói quen.',
+          'Kỷ niệm đặc sắc sâu đậm thể hiện tình yêu thương giữa người đó và em.'
+        ],
+        ketbi: [
+          'Bộc lộ tình yêu kính, biết ơn vô bờ bến của em dành cho người được tả.',
+          'Lời tự hứa ngoan ngoãn và ước mong tốt đẹp nhất cho người đó.'
+        ]
+      },
+      keywords: ['tảo tần', 'ấm áp', 'hiền hậu', 'nụ cười', 'chăm chỉ', 'kỷ niệm', 'kính yêu'],
+      errorsToAvoid: [
+        'Tránh việc tả người rập khuôn, liệt kê máy móc (tai hình lá mít, mũi dọc dừa...).',
+        'Tránh tả quá sơ sài hoặc cường điệu hóa xa rời thực tế.'
+      ]
+    },
+    'lap-chuong-trinh-hoat-dong': {
+      genre: 'Lập chương trình hoạt động',
+      requirements: [
+        `Lập chương trình hoạt động tập thể: ${cleanTopic}`,
+        'Đầy đủ cấu trúc 3 phần rõ ràng khoa học',
+        'Nêu chuẩn bị đầy đủ dụng cụ, phương tiện cụ thể',
+        'Phân công cụ thể chi tiết nhiệm vụ cho từng nhóm/cá nhân',
+        'Xây dựng tiến trình thực hiện logic theo trình tự thời gian'
+      ],
+      outline: {
+        mobi: [
+          `Nêu tên hoạt động và mục đích ý nghĩa của buổi sinh hoạt: ${cleanTopic}`,
+          'Xác định thời gian, địa điểm tổ chức chung.'
+        ],
+        thanbi: [
+          '1. Công tác chuẩn bị: dụng cụ lao động, ban tổ chức, khánh tiết, phương tiện.',
+          '2. Phân công cụ thể: Nhóm 1 làm gì, Nhóm 2 làm gì, vai trò trưởng nhóm chỉ đạo.',
+          '3. Các bước tiến hành: Trình tự hoạt động diễn ra từ bắt đầu đến lúc cao trào và kết thúc.'
+        ],
+        ketbi: [
+          'Khẳng định kết quả tốt đẹp và ý nghĩa hoạt động mang lại.',
+          'Ý thức trách nhiệm và niềm vui gắn kết tinh thần đoàn kết tập thể.'
+        ]
+      },
+      keywords: ['mục đích', 'chuẩn bị', 'phân công', 'tiến trình', 'đoàn kết', 'hiệu quả', 'trách nhiệm'],
+      errorsToAvoid: [
+        'Tránh viết theo phong cách văn kể chuyện, miêu tả cảm xúc tràn lan.',
+        'Tránh phân công chung chung, kế hoạch mơ hồ thiếu tính khả thi.'
       ]
     }
   };
