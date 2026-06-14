@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI, Type } from '@google/genai';
 import dotenv from 'dotenv';
@@ -2188,8 +2189,28 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://0.0.0.0:${PORT}`);
+    console.log(`\n======================================================`);
+    console.log(`VietMaster 5 Server is running!`);
+    console.log(`Local Access: http://localhost:${PORT}`);
+    console.log(`To connect from your phone/tablet on the same Wi-Fi, use:`);
+    
+    const networkInterfaces = os.networkInterfaces();
+    Object.keys(networkInterfaces).forEach((interfaceName) => {
+      const interfaces = networkInterfaces[interfaceName];
+      if (interfaces) {
+        interfaces.forEach((iface) => {
+          if (iface.family === 'IPv4' && !iface.internal) {
+            console.log(`  👉 http://${iface.address}:${PORT}`);
+          }
+        });
+      }
+    });
+    console.log(`======================================================\n`);
   });
 }
 
-startServer();
+if (process.env.NODE_ENV !== 'production') {
+  startServer();
+}
+
+export default app;
