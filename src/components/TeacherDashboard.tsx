@@ -21,6 +21,8 @@ interface TeacherDashboardProps {
   tabPermissions: Record<string, { student: boolean; guest: boolean }>;
   onUpdatePermissions: (newPermissions: Record<string, { student: boolean; guest: boolean }>) => void;
   onViewStudentPortfolio?: (student: StudentEntry) => void;
+  teacherId: string;
+  onUpdateTeacherId?: (newTeacherId: string) => void;
 }
 
 export default function TeacherDashboard({ 
@@ -31,7 +33,9 @@ export default function TeacherDashboard({
   onSaveClass,
   tabPermissions,
   onUpdatePermissions,
-  onViewStudentPortfolio
+  onViewStudentPortfolio,
+  teacherId,
+  onUpdateTeacherId
 }: TeacherDashboardProps) {
   // Class setup state
   const [isEditing, setIsEditing] = useState(!classInfo);
@@ -1263,6 +1267,90 @@ export default function TeacherDashboard({
                 </div>
                 <span className="text-xs text-neutral-400">|</span>
                 <span className="text-xs text-neutral-500">Model: <span className="font-semibold text-neutral-700">{selectedModel}</span></span>
+              </div>
+            </div>
+          </div>
+
+          {/* ===== DEVICE SYNC ===== */}
+          <div className="lg:col-span-4">
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl border border-blue-100/30 shadow-sm p-6 space-y-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center text-lg">
+                  🌐
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-neutral-800">🌐 Đồng bộ hóa thiết bị khác</h3>
+                  <p className="text-[11px] text-neutral-500">Kết nối máy tính và điện thoại để dùng chung dữ liệu học tập</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-3 border-t border-neutral-100 text-xs">
+                {/* Section 1: Show sync code */}
+                <div className="space-y-2.5">
+                  <span className="font-bold text-neutral-700 block">Mã đồng bộ lớp học hiện tại:</span>
+                  <div className="flex items-center space-x-2">
+                    <code className="flex-1 text-center bg-neutral-100 py-2 px-3 rounded-xl font-mono font-bold text-indigo-600 select-all border border-neutral-200">
+                      {teacherId}
+                    </code>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(teacherId);
+                        alert('Đã sao chép mã đồng bộ lớp học! 📋');
+                      }}
+                      className="px-4 py-2 bg-neutral-100 hover:bg-neutral-250 text-neutral-700 border border-neutral-200 font-bold rounded-xl transition cursor-pointer"
+                    >
+                      Sao chép 📋
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-neutral-400 leading-relaxed">
+                    * Đưa mã này cho học sinh nhập trên điện thoại khi đăng nhập, hoặc nhập mã này trên thiết bị di động của bạn để xem báo cáo.
+                  </p>
+                </div>
+
+                {/* Section 2: Input other sync code */}
+                <div className="space-y-2.5">
+                  <span className="font-bold text-neutral-700 block">Nhập mã đồng bộ từ thiết bị khác:</span>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      placeholder="Mã thiết bị (t_abc123...)"
+                      id="teacher-sync-code-input"
+                      className="flex-1 py-2 px-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-purple-400 bg-neutral-50 focus:bg-white transition text-xs font-mono"
+                    />
+                    <button
+                      onClick={async () => {
+                        const inputVal = (document.getElementById('teacher-sync-code-input') as HTMLInputElement)?.value?.trim();
+                        if (!inputVal) return;
+                        if (inputVal === teacherId) {
+                          alert('Mã này chính là mã của thiết bị hiện tại!');
+                          return;
+                        }
+                        if (confirm('Lưu ý: Kết nối mã đồng bộ khác sẽ thay thế danh sách lớp hiện tại trên trình duyệt này bằng lớp của thiết bị đó. Bạn có chắc chắn muốn tiếp tục?')) {
+                          try {
+                            const res = await fetch(`/api/sync/class-info?teacherId=${inputVal}`);
+                            if (res.ok) {
+                              const data = await res.json();
+                              if (data.success && data.classInfo) {
+                                // Update teacherId and classInfo
+                                onUpdateTeacherId?.(inputVal);
+                                alert('Kết nối đồng bộ thành công! 🎉 Dữ liệu lớp học và bài viết đã được tải về trình duyệt này.');
+                              } else {
+                                alert('Không tìm thấy lớp học với mã đồng bộ này. Vui lòng kiểm tra lại.');
+                              }
+                            } else {
+                              alert('Lỗi kết nối máy chủ.');
+                            }
+                          } catch (err) {
+                            alert('Lỗi kết nối mạng.');
+                          }
+                        }
+                      }}
+                      className="px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold rounded-xl transition shadow-sm cursor-pointer"
+                    >
+                      Kết nối 🔗
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -228,6 +228,45 @@ export default function App() {
     }
   }, [isTeacherAuthenticated]);
 
+  // --- CLOUD SYNC ON STARTUP ---
+  useEffect(() => {
+    if (!teacherId) return;
+
+    const syncClassAndSubmissions = async () => {
+      try {
+        // 1. Sync Class Info
+        const classRes = await fetch(`/api/sync/class-info?teacherId=${teacherId}`);
+        if (classRes.ok) {
+          const classData = await classRes.json();
+          if (classData.success && classData.classInfo) {
+            setClassInfo(classData.classInfo);
+            localStorage.setItem('vm5_class_info', JSON.stringify(classData.classInfo));
+          }
+        }
+
+        // 2. Sync Submissions for all students (populate local storage cache)
+        const subRes = await fetch(`/api/sync/submissions?teacherId=${teacherId}`);
+        if (subRes.ok) {
+          const subData = await subRes.json();
+          if (subData.success && subData.submissions) {
+            const allSubs = subData.submissions;
+            Object.keys(allSubs).forEach((studentId) => {
+              localStorage.setItem(`vm5_submissions_${studentId}`, JSON.stringify(allSubs[studentId]));
+            });
+            // If there's an active student, also update the customSavedOutlines state
+            if (currentStudent && allSubs[currentStudent.id]) {
+              setCustomSavedOutlines(allSubs[currentStudent.id]);
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to sync data from cloud server:', err);
+      }
+    };
+
+    syncClassAndSubmissions();
+  }, [teacherId, currentStudent?.id]);
+
   // Auto-redirect unauthorized users away from teacher tab or disabled tabs
   useEffect(() => {
     if (activeTab === 'teacher') {
@@ -305,11 +344,26 @@ export default function App() {
     setActiveTab('helper');
   };
 
-  const handleOutlineSaved = (newOutline: OutlineSubmission) => {
+  const handleOutlineSaved = async (newOutline: OutlineSubmission) => {
     const updated = [newOutline, ...customSavedOutlines];
     setCustomSavedOutlines(updated);
     if (currentStudent) {
       localStorage.setItem(`vm5_submissions_${currentStudent.id}`, JSON.stringify(updated));
+
+      // Sync to cloud server
+      try {
+        await fetch('/api/sync/submissions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            teacherId,
+            studentId: currentStudent.id,
+            submissions: updated
+          })
+        });
+      } catch (err) {
+        console.warn('Failed to sync outline to server:', err);
+      }
     }
   };
 
@@ -329,10 +383,24 @@ export default function App() {
     setShowStudentPicker(false);
   };
 
-  const handleSaveClass = (info: ClassInfo) => {
+  const handleSaveClass = async (info: ClassInfo) => {
     setClassInfo(info);
     localStorage.setItem('vm5_class_info', JSON.stringify(info));
     trackTeacherUsage(info);
+
+    // Sync to cloud server
+    try {
+      await fetch('/api/sync/class-info', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          teacherId,
+          classInfo: info
+        })
+      });
+    } catch (err) {
+      console.warn('Failed to sync class info to server:', err);
+    }
   };
 
   const handleLogout = () => {
@@ -381,12 +449,48 @@ export default function App() {
                 <X className="w-5 h-5 text-neutral-400" />
               </button>
             </div>
-            <div className="py-6 space-y-2">
+            <div className="py-6 space-y-4">
               <span className="text-5xl block">🏫</span>
               <p className="text-sm font-bold text-neutral-700">Lớp học chưa được thiết lập</p>
               <p className="text-xs text-neutral-500 leading-relaxed">
-                Vui lòng báo cô giáo/thầy giáo đăng nhập bằng tài khoản Giáo viên để thiết lập danh sách lớp trước nhé!
+                Vui lòng báo cô giáo/thầy giáo đăng nhập để thiết lập lớp, hoặc nhập **mã lớp học** do cô giáo cung cấp để kết nối:
               </p>
+              <div className="flex flex-col items-center space-y-2 pt-2 border-t border-neutral-100">
+                <input
+                  type="text"
+                  placeholder="Mã lớp học (ví dụ: t_abc123)..."
+                  id="student-sync-code-input"
+                  className="w-full text-center text-xs font-mono py-2.5 px-3 rounded-xl border border-neutral-200 focus:outline-none focus:border-amber-400 bg-neutral-50 focus:bg-white transition"
+                />
+                <button
+                  onClick={async () => {
+                    const input = (document.getElementById('student-sync-code-input') as HTMLInputElement)?.value?.trim();
+                    if (!input) return;
+                    try {
+                      const res = await fetch(`/api/sync/class-info?teacherId=${input}`);
+                      if (res.ok) {
+                        const data = await res.json();
+                        if (data.success && data.classInfo) {
+                          setTeacherId(input);
+                          localStorage.setItem('vm5_teacher_id', input);
+                          setClassInfo(data.classInfo);
+                          localStorage.setItem('vm5_class_info', JSON.stringify(data.classInfo));
+                          alert('Kết nối lớp học thành công! 🎉 Em hãy chọn tên của mình nhé.');
+                        } else {
+                          alert('Không tìm thấy lớp học với mã này. Hãy hỏi cô giáo xem có đúng mã không nhé.');
+                        }
+                      } else {
+                        alert('Không kết nối được với máy chủ. Vui lòng thử lại.');
+                      }
+                    } catch (err) {
+                      alert('Lỗi kết nối mạng.');
+                    }
+                  }}
+                  className="w-full py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-xl text-xs transition shadow-sm cursor-pointer"
+                >
+                  Kết nối lớp học 🔗
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -431,6 +535,32 @@ export default function App() {
                     </button>
                   );
                 })}
+              </div>
+              <div className="pt-2.5 border-t border-neutral-100 flex justify-center">
+                <button
+                  onClick={() => {
+                    const newCode = prompt('Nhập mã đồng bộ lớp học do cô giáo cung cấp (ví dụ: t_abc123):');
+                    if (!newCode || !newCode.trim()) return;
+                    const cleanCode = newCode.trim();
+                    fetch(`/api/sync/class-info?teacherId=${cleanCode}`)
+                      .then(res => res.json())
+                      .then(data => {
+                        if (data.success && data.classInfo) {
+                          setTeacherId(cleanCode);
+                          localStorage.setItem('vm5_teacher_id', cleanCode);
+                          setClassInfo(data.classInfo);
+                          localStorage.setItem('vm5_class_info', JSON.stringify(data.classInfo));
+                          alert('Đã kết nối lớp học mới thành công! 🎉');
+                        } else {
+                          alert('Không tìm thấy lớp học với mã này. Hãy kiểm tra lại.');
+                        }
+                      })
+                      .catch(() => alert('Lỗi kết nối mạng.'));
+                  }}
+                  className="text-[11px] text-amber-600 hover:text-amber-700 font-bold transition flex items-center space-x-1 cursor-pointer bg-transparent border-none py-1"
+                >
+                  <span>🔗 Kết nối mã lớp học khác</span>
+                </button>
               </div>
             </>
           ) : (
@@ -1173,6 +1303,24 @@ export default function App() {
                   const saved = localStorage.getItem(`vm5_submissions_${student.id}`);
                   setCustomSavedOutlines(saved ? JSON.parse(saved) : []);
                   setActiveTab('portfolio');
+                }}
+                teacherId={teacherId}
+                onUpdateTeacherId={(newId) => {
+                  setTeacherId(newId);
+                  localStorage.setItem('vm5_teacher_id', newId);
+                  // Refresh classInfo from server for the new teacherId
+                  fetch(`/api/sync/class-info?teacherId=${newId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                      if (data.success && data.classInfo) {
+                        setClassInfo(data.classInfo);
+                        localStorage.setItem('vm5_class_info', JSON.stringify(data.classInfo));
+                      } else {
+                        setClassInfo(null);
+                        localStorage.removeItem('vm5_class_info');
+                      }
+                    })
+                    .catch(err => console.error(err));
                 }}
               />
             </motion.div>

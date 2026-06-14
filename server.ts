@@ -1957,6 +1957,220 @@ app.get('/api/admin/stats', async (req, res) => {
   }
 });
 
+// ===== CENTRALIZED DATABASE HELPERS =====
+async function getClassInfo(teacherId: string): Promise<any | null> {
+  if (KV_REST_API_URL && KV_REST_API_TOKEN) {
+    try {
+      const response = await fetch(`${KV_REST_API_URL}/`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${KV_REST_API_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(['HGET', 'vm5_classes', teacherId]),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.result) {
+          return JSON.parse(data.result);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to get class info from Vercel KV, falling back to local file:', err);
+    }
+  }
+
+  // Local file fallback
+  const filePath = path.join(process.cwd(), 'data', 'classes.json');
+  try {
+    if (fs.existsSync(filePath)) {
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      const db = JSON.parse(fileContent);
+      return db[teacherId] || null;
+    }
+  } catch (err) {
+    console.error('Failed to read local classes file:', err);
+  }
+  return null;
+}
+
+async function saveClassInfo(teacherId: string, classInfo: any): Promise<void> {
+  if (KV_REST_API_URL && KV_REST_API_TOKEN) {
+    try {
+      const response = await fetch(`${KV_REST_API_URL}/`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${KV_REST_API_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(['HSET', 'vm5_classes', teacherId, JSON.stringify(classInfo)]),
+      });
+      if (response.ok) return;
+      console.warn('Failed to save class to Vercel KV, writing to local file instead.');
+    } catch (err) {
+      console.error('Failed to save class to Vercel KV:', err);
+    }
+  }
+
+  // Local file fallback
+  const dirPath = path.join(process.cwd(), 'data');
+  const filePath = path.join(dirPath, 'classes.json');
+  try {
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
+    let db: Record<string, any> = {};
+    if (fs.existsSync(filePath)) {
+      db = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    }
+    db[teacherId] = classInfo;
+    fs.writeFileSync(filePath, JSON.stringify(db, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Failed to write local classes file:', err);
+  }
+}
+
+async function getAllSubmissions(teacherId: string): Promise<Record<string, any[]>> {
+  if (KV_REST_API_URL && KV_REST_API_TOKEN) {
+    try {
+      const response = await fetch(`${KV_REST_API_URL}/`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${KV_REST_API_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(['HGET', 'vm5_submissions', teacherId]),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.result) {
+          return JSON.parse(data.result);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to get submissions from Vercel KV, falling back to local file:', err);
+    }
+  }
+
+  // Local file fallback
+  const filePath = path.join(process.cwd(), 'data', 'submissions.json');
+  try {
+    if (fs.existsSync(filePath)) {
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      const db = JSON.parse(fileContent);
+      return db[teacherId] || {};
+    }
+  } catch (err) {
+    console.error('Failed to read local submissions file:', err);
+  }
+  return {};
+}
+
+async function saveStudentSubmissions(teacherId: string, studentId: string, studentSubmissions: any[]): Promise<void> {
+  const db = await getAllSubmissions(teacherId);
+  db[studentId] = studentSubmissions;
+
+  if (KV_REST_API_URL && KV_REST_API_TOKEN) {
+    try {
+      const response = await fetch(`${KV_REST_API_URL}/`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${KV_REST_API_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(['HSET', 'vm5_submissions', teacherId, JSON.stringify(db)]),
+      });
+      if (response.ok) return;
+      console.warn('Failed to save submissions to Vercel KV, writing to local file instead.');
+    } catch (err) {
+      console.error('Failed to save submissions to Vercel KV:', err);
+    }
+  }
+
+  // Local file fallback
+  const dirPath = path.join(process.cwd(), 'data');
+  const filePath = path.join(dirPath, 'submissions.json');
+  try {
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
+    let fullDb: Record<string, any> = {};
+    if (fs.existsSync(filePath)) {
+      fullDb = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    }
+    fullDb[teacherId] = db;
+    fs.writeFileSync(filePath, JSON.stringify(fullDb, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Failed to write local submissions file:', err);
+  }
+}
+
+// ===== CENTRALIZED DATABASE SYNC ENDPOINTS =====
+
+// 1. Get Class Info
+app.get('/api/sync/class-info', async (req, res) => {
+  const teacherId = req.query.teacherId as string;
+  if (!teacherId) {
+    return res.status(450).json({ error: 'Mã giáo viên (teacherId) là bắt buộc' });
+  }
+  try {
+    const classInfo = await getClassInfo(teacherId);
+    return res.json({ success: true, classInfo });
+  } catch (err: any) {
+    console.error('Error in GET /api/sync/class-info:', err);
+    return res.status(500).json({ error: err.message || 'Lỗi server' });
+  }
+});
+
+// 2. Save Class Info
+app.post('/api/sync/class-info', async (req, res) => {
+  const { teacherId, classInfo } = req.body;
+  if (!teacherId || !classInfo) {
+    return res.status(450).json({ error: 'Mã giáo viên và thông tin lớp học là bắt buộc' });
+  }
+  try {
+    await saveClassInfo(teacherId, classInfo);
+    return res.json({ success: true });
+  } catch (err: any) {
+    console.error('Error in POST /api/sync/class-info:', err);
+    return res.status(500).json({ error: err.message || 'Lỗi server' });
+  }
+});
+
+// 3. Get Student Submissions
+app.get('/api/sync/submissions', async (req, res) => {
+  const teacherId = req.query.teacherId as string;
+  const studentId = req.query.studentId as string;
+  if (!teacherId) {
+    return res.status(450).json({ error: 'Mã giáo viên (teacherId) là bắt buộc' });
+  }
+  try {
+    const allSubs = await getAllSubmissions(teacherId);
+    if (studentId) {
+      return res.json({ success: true, submissions: allSubs[studentId] || [] });
+    }
+    return res.json({ success: true, submissions: allSubs });
+  } catch (err: any) {
+    console.error('Error in GET /api/sync/submissions:', err);
+    return res.status(500).json({ error: err.message || 'Lỗi server' });
+  }
+});
+
+// 4. Save Student Submissions
+app.post('/api/sync/submissions', async (req, res) => {
+  const { teacherId, studentId, submissions } = req.body;
+  if (!teacherId || !studentId || !submissions) {
+    return res.status(450).json({ error: 'Mã giáo viên, mã học sinh và danh sách bài viết là bắt buộc' });
+  }
+  try {
+    await saveStudentSubmissions(teacherId, studentId, submissions);
+    return res.json({ success: true });
+  } catch (err: any) {
+    console.error('Error in POST /api/sync/submissions:', err);
+    return res.status(500).json({ error: err.message || 'Lỗi server' });
+  }
+});
+
 // Configure Vite middleware in development or express static server in production
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
