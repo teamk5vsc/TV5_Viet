@@ -87,6 +87,85 @@ function cleanJsonResponse(text: string): string {
   return cleaned.trim();
 }
 
+function parseMockOutlineItem(item: string, genre: string): { point: string; detail: string; sample: string } {
+  let point = item;
+  let detail = '';
+  let sample = '';
+  
+  // Extract detail from parentheses
+  const parenMatch = item.match(/\(([^)]+)\)/);
+  if (parenMatch) {
+    detail = parenMatch[1];
+    point = item.replace(/\([^)]+\)/, '').trim();
+  }
+  
+  // Clean punctuation from point
+  point = point.replace(/[.!?:]$/, '').trim();
+  
+  // Add appropriate mock sample sentence based on genre
+  const genreLower = (genre || '').toLowerCase();
+  if (genreLower.includes('cảnh')) {
+    if (point.includes('Giới thiệu') || point.includes('Mở bài')) {
+      sample = 'Mỗi buổi sáng, khi ông mặt trời thức giấc kéo màn sương mỏng lên, khu vườn nhỏ nhà em lại hiện lên lung linh, đẹp như một bức tranh cổ tích.';
+    } else if (point.includes('bao quát')) {
+      sample = 'Từ trên cao nhìn xuống, toàn bộ cảnh vật như được khoác lên mình chiếc áo mới tươi non, bầu không khí mát lành làm lòng người khoan khoái.';
+    } else if (point.includes('chi tiết') || point.includes('sự vật')) {
+      sample = 'Những đóa hồng nhung đỏ thắm kiêu hãnh đọng những giọt sương mai lấp lánh như những hạt ngọc, hương thơm dịu nhẹ lan tỏa khắp không gian.';
+    } else if (point.includes('âm thanh') || point.includes('hoạt động')) {
+      sample = 'Tiếng chim hót líu lo trên cành khế ngọt hòa cùng tiếng lá cây rì rào trong gió nhẹ tạo nên một bản nhạc xôn xao của ngày mới.';
+    } else {
+      sample = 'Đứng trước cảnh sắc tươi đẹp ấy, em thầm hứa sẽ luôn chăm sóc khu vườn để nơi đây mãi giữ được vẻ đẹp thanh bình này.';
+    }
+  } else if (genreLower.includes('chuyện')) {
+    if (point.includes('Giới thiệu') || point.includes('Mở bài')) {
+      sample = 'Trong khu rừng nọ, nơi những bóng cây cổ thụ che rợp một góc trời, có một chú thỏ con vô cùng dũng cảm và ham học hỏi tên là Bông.';
+    } else if (point.includes('tình huống') || point.includes('bắt đầu')) {
+      sample = 'Một hôm, khi đang dạo chơi bên bờ suối, thỏ Bông chợt nghe thấy tiếng kêu cứu yếu ớt phát ra từ sâu trong hang đá tối om.';
+    } else if (point.includes('diễn biến') || point.includes('hành động')) {
+      sample = 'Không một chút do dự, chú thỏ nhỏ liền bật nhảy qua các phiến đá trơn trượt, tiến về phía tiếng kêu để tìm cách giúp đỡ.';
+    } else if (point.includes('cao trào')) {
+      sample = 'Đột nhiên, một bóng đen to lớn xuất hiện chắn lối, thỏ Bông lấy hết can đảm dùng trí thông minh để đánh lạc hướng kẻ địch.';
+    } else {
+      sample = 'Chuyến phiêu lưu đáng nhớ ấy đã dạy cho thỏ Bông bài học quý giá về lòng dũng cảm và tinh thần tương thân tương ái.';
+    }
+  } else if (genreLower.includes('nhân vật') || genreLower.includes('tình cảm')) {
+    if (point.includes('Giới thiệu') || point.includes('Mở bài')) {
+      sample = 'Trong số các tác phẩm văn học đã học, hình ảnh nhân vật Dế Mèn trong truyện "Dế Mèn phiêu lưu ký" để lại trong em ấn tượng sâu sắc nhất.';
+    } else if (point.includes('ngoại hình') || point.includes('hành động')) {
+      sample = 'Với đôi càng mẫm bóng, những cái vuốt ở chân cứng ngắc và nhọn hoắt, Dế Mèn hiện lên thật oai vệ nhưng cũng đầy vẻ tự phụ.';
+    } else if (point.includes('tính cách') || point.includes('phẩm chất')) {
+      sample = 'Dù từng kiêu ngạo gây ra cái chết thương tâm cho Dế Choắt, hành động hối hận và giọt nước mắt của Mèn cho thấy chú có một trái tim biết hướng thiện.';
+    } else {
+      sample = 'Nhân vật Dế Mèn đã để lại cho em bài học đắt giá rằng sự kiêu ngạo ngông cuồng có thể gây hại cho người khác và cho chính mình.';
+    }
+  } else if (genreLower.includes('ý kiến') || genreLower.includes('lập trường')) {
+    if (point.includes('Giới thiệu') || point.includes('Mở bài')) {
+      sample = 'Theo em, việc hình thành thói quen đọc sách mỗi ngày là vô cùng cần thiết đối với mỗi học sinh chúng ta.';
+    } else if (point.includes('lý lẽ') || point.includes('dẫn chứng')) {
+      sample = 'Đọc sách không chỉ giúp chúng ta mở rộng chân trời tri thức về thế giới xung quanh mà còn bồi đắp tâm hồn, giúp ta biết yêu thương và chia sẻ.';
+    } else if (point.includes('phản đối') || point.includes('mặt trái')) {
+      sample = 'Trái lại, việc quá phụ thuộc vào các thiết bị điện tử sẽ làm giảm khả năng tập trung và hạn chế trí tưởng tượng phong phú của học sinh.';
+    } else {
+      sample = 'Vì những lợi ích to lớn ấy, mỗi chúng ta hãy cùng nhau xây dựng văn hóa đọc, bắt đầu từ những trang sách nhỏ mỗi ngày.';
+    }
+  } else {
+    // Default fallback sample
+    if (point.includes('Mở bài') || point.includes('Giới thiệu')) {
+      sample = 'Mỗi khi nghĩ về điều này, trong lòng em lại trào dâng những cảm xúc thật đặc biệt và khó tả.';
+    } else if (point.includes('Kết bài') || point.includes('tình cảm')) {
+      sample = 'Những kỷ niệm đẹp đẽ ấy sẽ mãi là hành trang quý giá theo em suốt chặng đường đời phía trước.';
+    } else {
+      sample = 'Từng chi tiết hiện lên chân thực như một thước phim quay chậm, gợi nhắc những bài học sâu sắc về cuộc sống.';
+    }
+  }
+
+  return {
+    point,
+    detail: detail || 'Viết chi tiết, rõ ràng và sử dụng các từ ngữ gợi tả biểu cảm.',
+    sample
+  };
+}
+
 // Simulated data helpers for offline fallback so the application is instantly functional
 function getMockOutline(topic: string, type: string) {
   const cleanTopic = topic || 'Tả cảnh giờ ra chơi';
@@ -428,8 +507,17 @@ function getMockOutline(topic: string, type: string) {
     }
   };
 
-  return genreData[type] || genreData['ta-canh'];
+  const result = genreData[type] || genreData['ta-canh'];
+  return {
+    ...result,
+    outline: {
+      mobi: result.outline.mobi.map(item => parseMockOutlineItem(item, result.genre)),
+      thanbi: result.outline.thanbi.map(item => parseMockOutlineItem(item, result.genre)),
+      ketbi: result.outline.ketbi.map(item => parseMockOutlineItem(item, result.genre))
+    }
+  };
 }
+
 
 function getMockEssay(topic: string, type: string, format: 'essay' | 'paragraph') {
   const cleanTopic = topic || 'Tả cảnh đồi chè quê em';
@@ -772,13 +860,32 @@ Hãy trả về một đối tượng JSON có cấu trúc chính xác sau đây
   "genre": "Tên tiếng Việt hiển thị của dạng bài (ví dụ: Văn tả cảnh)",
   "requirements": ["Danh sách 3-4 yêu cầu quan trọng cần có khi làm đề bài này"],
   "outline": {
-    "mobi": ["Danh sách 2-3 ý chính của phần Mở bài"],
-    "thanbi": ["Danh sách 4-5 ý chính của phần Thân bài, có thể bắt đầu bằng chữ số"],
-    "ketbi": ["Danh sách 1-2 ý chính của phần Kết bài"]
+    "mobi": [
+      {
+        "point": "Ý chính của phần Mở bài",
+        "detail": "Hướng dẫn cụ thể, dễ hiểu cho học sinh lớp 5 cách viết ý này",
+        "sample": "Câu văn mẫu minh họa xuất sắc sử dụng từ ngữ gợi tả/gợi cảm hoặc biện pháp nghệ thuật"
+      }
+    ],
+    "thanbi": [
+      {
+        "point": "Ý chính của phần Thân bài (ví dụ: Tả bao quát, tả chi tiết, hành động, tình tiết...)",
+        "detail": "Hướng dẫn cụ thể cách phát triển ý này",
+        "sample": "Câu văn mẫu minh họa xuất sắc cho ý này"
+      }
+    ],
+    "ketbi": [
+      {
+        "point": "Ý chính của phần Kết bài",
+        "detail": "Hướng dẫn cụ thể cách bộc lộ cảm xúc lắng đọng hoặc ý nghĩa sâu sắc",
+        "sample": "Câu văn mẫu kết bài xuất sắc"
+      }
+    ]
   },
   "keywords": ["Danh sách 5-8 từ khóa, từ láy miêu tả hoặc bày tỏ cảm xúc đắt giá cần dùng"],
   "errorsToAvoid": ["Danh sách 2-3 lỗi học sinh hay mắc phải đối với đề tài này"]
 }`;
+
 
     const textRes = await generateWithFallback(client, model, prompt, {
       responseMimeType: 'application/json',
@@ -1820,8 +1927,9 @@ interface TelemetryRecord {
   lastActive: string;
 }
 
-const KV_REST_API_URL = process.env.KV_REST_API_URL;
-const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN;
+const KV_REST_API_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+const KV_REST_API_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+
 
 async function getTelemetryStats(): Promise<Record<string, TelemetryRecord>> {
   if (KV_REST_API_URL && KV_REST_API_TOKEN) {
